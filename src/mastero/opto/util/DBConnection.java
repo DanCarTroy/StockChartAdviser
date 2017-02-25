@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import mastero.opto.model.User;
+
 
 
 public class DBConnection /*implements Constants*/ {
@@ -124,6 +126,11 @@ public class DBConnection /*implements Constants*/ {
 
 		return res;
 
+	}
+
+	public User getLogin(String username, String password) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
