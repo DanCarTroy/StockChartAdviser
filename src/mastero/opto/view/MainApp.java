@@ -16,16 +16,23 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("ProfitUs");
+		showMainFrame();
 		showMainWindow();
 	}
 
-	public void showMainWindow()throws IOException{
+	public void showMainFrame()throws IOException{
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(MainApp.class.getResource("MainWindow.fxml"));
+		loader.setLocation(MainApp.class.getResource("MainFrame.fxml"));
 		mainLayout = loader.load();
 		Scene scene = new Scene(mainLayout);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+
+	public static void showMainWindow() throws IOException{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(MainApp.class.getResource("MainWindow.fxml"));
+		mainLayout.setCenter(loader.load());
 	}
 
 

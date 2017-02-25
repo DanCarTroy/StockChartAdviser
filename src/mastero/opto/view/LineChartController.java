@@ -1,5 +1,6 @@
 package mastero.opto.view;
 
+import javafx.fxml.FXML;
 import mastero.opto.view.MainApp;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.io.IOException;
 public class LineChartController {
     private MainApp main = new MainApp();
 
+    @FXML
     private void showMainFrame() throws IOException{
         main.showMainWindow();
     }
