@@ -5,25 +5,32 @@ import javafx.beans.property.StringProperty;
 
 public class User {
 
+	private final StringProperty userName;
 	private final StringProperty firstName;
 	private final StringProperty lastName;
 	private final StringProperty emailAddress;
 
 	/**
-	 * Default Constructor. Has to be explicitly set because other constructors are defined.
+	 * Constructor that sets only the username
 	 */
-	public User() {
-		this(null, null, null);
+	public User(String userName) {
+		this.userName = new SimpleStringProperty(userName);
+		firstName = new SimpleStringProperty(null);
+		lastName = new SimpleStringProperty(null);
+		emailAddress = new SimpleStringProperty(null);
+
 	}
 
 	/**
-	 * Constructor that takes first name, last name and email
+	 * Constructor that takes four arguments
+	 * @param user  The given user name.
 	 * @param first The given first name.
 	 * @param last	The given last name.
 	 * @param email	The given email.
 	 */
-	public User(String first, String last, String email)
+	public User(String user, String first, String last, String email)
 	{
+		this.userName = new SimpleStringProperty(user);
 		firstName = new SimpleStringProperty(first);
 		lastName = new SimpleStringProperty(last);
 		emailAddress = new SimpleStringProperty(email);
@@ -32,6 +39,11 @@ public class User {
 
 
 	// Accessor methods
+
+	public String getUserName()
+	{
+		return userName.get();
+	}
 
 	public String getFirstName()
 	{
@@ -50,6 +62,11 @@ public class User {
 
 	// Mutators
 
+	public void setUserName(String name)
+	{
+		userName.set(name);
+	}
+
 	public void setFirstName(String name)
 	{
 		firstName.set(name);
@@ -66,6 +83,10 @@ public class User {
 	}
 
 	// Methods that return the property objects
+
+	public StringProperty userNameProperty() {
+        return userName;
+    }
 
 	public StringProperty firstNameProperty() {
         return firstName;

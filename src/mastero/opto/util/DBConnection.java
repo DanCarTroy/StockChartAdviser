@@ -14,7 +14,7 @@ public class DBConnection /*implements Constants*/ {
 	private Connection myCon;
 
 	// Info to connect to the database
-	private static final String url = "jdbc:mysql://localhost:3306/stockAdviserUsers";
+	private static final String url = "jdbc:mysql://localhost:3306/stock_adviser_db";
 	private static final String user = "root";
 	private static final String pwd = "DHCTAMPM1989";
 
@@ -91,23 +91,7 @@ public class DBConnection /*implements Constants*/ {
 		return -1;
 	}
 
-	/**
-	 * Another suggested version of executeUpdate. It is being used by the Project tests.
-	 * It is more useful to them because it passes the bucket(SQLException) higher up the chain.
-	 * @return The number of rows affected.
-	 */
-	public int executeUpdate2(String query, Object... values) throws SQLException{
-		Statement stmt = null;
-		int afRows = -1;
-		//try {
-			stmt = myCon.createStatement();
-			afRows = stmt.executeUpdate(String.format(query, values));
-			return afRows;
-		/*} catch (SQLException e) {
-			e.printStackTrace();
-		}*/
 
-	}
 
 	public int executeUpdate(String query) {
 		Statement stmt = null;
