@@ -14,14 +14,14 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <MenuButton layoutX="7.0" layoutY="27.0" mnemonicParsing="false" text="Historical Data">
+                  <MenuButton layoutY="177.0" mnemonicParsing="false" text="Historical Data">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="1 year" />
-                      <MenuItem mnemonicParsing="false" text="2 years" />
-                        <MenuItem mnemonicParsing="false" text="5 years" />
+                      <MenuItem mnemonicParsing="false" onAction="#oneYearDatabtn" text="1 year" />
+                      <MenuItem mnemonicParsing="false" onAction="#twoYearDatabtn" text="2 years" />
+                        <MenuItem mnemonicParsing="false" onAction="#fiveYearDatabtn" text="5 years" />
                     </items>
                   </MenuButton>
-                  <MenuButton layoutX="7.0" layoutY="136.0" mnemonicParsing="false" text="SMAs">
+                  <MenuButton layoutX="7.0" layoutY="315.0" mnemonicParsing="false" text="SMAs">
                     <items>
                       <MenuItem mnemonicParsing="false" text="20 days" />
                       <MenuItem mnemonicParsing="false" text="50 dyas" />
@@ -29,11 +29,12 @@
                         <MenuItem mnemonicParsing="false" text="200 days" />
                     </items>
                   </MenuButton>
+                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Dattat" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <LineChart layoutX="113.0" layoutY="153.0" prefHeight="671.0" prefWidth="657.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <LineChart fx:id="lineChart" layoutX="113.0" layoutY="153.0" prefHeight="671.0" prefWidth="657.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>

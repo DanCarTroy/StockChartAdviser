@@ -1,6 +1,8 @@
 package mastero.opto.view;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
 
 import java.io.IOException;
 
