@@ -68,15 +68,13 @@ public class MainApp extends Application {
 				closePrice.add(Double.parseDouble((f.format(Double.parseDouble(dataString.split(",")[closePriceIndex])))));
 				dateStrings.add(dataString.split(",")[dateStringIndex]);
 			}
-			reverse(closePrice);
-			reverse(dateStrings);
 		}
 		catch(FileNotFoundException e){
 			e.getStackTrace();
 		}
 
 		XYChart.Series<String,Number> series = new XYChart.Series<String, Number>();
-		for (int i = 0; i < closePrice.size();i++) {
+		for (int i = closePrice.size() - 1; i > -1;i--) {
 			series.getData().add(new XYChart.Data<String, Number>(dateStrings.get(i), closePrice.get(i)));
 		}
 		return series;
@@ -98,15 +96,13 @@ public class MainApp extends Application {
 				closePrice.add(Double.parseDouble((f.format(Double.parseDouble(dataString.split(",")[closePriceIndex])))));
 				dateStrings.add(dataString.split(",")[dateStringIndex]);
 			}
-			reverse(closePrice);
-			reverse(dateStrings);
 		}
 		catch(FileNotFoundException e){
 			e.getStackTrace();
 		}
 
 		XYChart.Series<String,Number> series = new XYChart.Series<String, Number>();
-		for (int i = closePrice.size() - range; i < closePrice.size();i++) {
+		for (int i = range; i > -1;i--) {
 			series.getData().add(new XYChart.Data<String, Number>(dateStrings.get(i), closePrice.get(i)));
 		}
 		return series;
