@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import mastero.opto.MainApp;
 import mastero.opto.model.User;
 import mastero.opto.util.DBConnection;
@@ -23,6 +24,7 @@ public class LoginController {
 	private TextField usernameField;
 	@FXML
 	private PasswordField passwordField;
+	
 
 	// Reference to the main application.
     private MainApp mainApp;
@@ -97,6 +99,12 @@ public class LoginController {
 
 		usernameField.setText("");
 		passwordField.setText("");
+    }
+    
+    @FXML
+    private void handleSignUp()
+    {
+    	mainApp.showCreateUserDialog();
     }
 
     public User verifyLogin(String username, String password) {

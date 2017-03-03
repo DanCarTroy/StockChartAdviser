@@ -1,13 +1,13 @@
-
+package mastero.opto.view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-//import mastero.opto.model.User;
+import mastero.opto.model.User;
 
-public class NewUserDialogController {
+public class CreateUserDialogController {
 
     @FXML
     private TextField userNameField;
@@ -81,10 +81,8 @@ public class NewUserDialogController {
             user.setUserName(userNameField.getText());
             user.setFirstName(firstNameField.getText());
             user.setLastName(lastNameField.getText());
-            user.setEmail(emailField.getText());
-            user.setPhone(Integer.parseInt(phoneField.getText()));
-            //user.setCity(cityField.getText());
-            user.setBirthday(DateUtil.parse(birthdayField.getText()));
+            user.setEmailAddress(emailField.getText());
+            //user.setBirthday(DateUtil.parse(birthdayField.getText()));
 
             okClicked = true;
             dialogStage.close();
@@ -108,8 +106,8 @@ public class NewUserDialogController {
         String errorMessage = "";
         
         if (userNameField.getText() == null || userNameField.getText().length() == 0) 
-        {            
-            errorMessage += "No valid first name!\n";         
+        {
+            errorMessage += "No valid first name!\n";  
         }
         
         if (firstNameField.getText() == null || firstNameField.getText().length() == 0) {
@@ -121,7 +119,8 @@ public class NewUserDialogController {
         if (emailField.getText() == null || emailField.getText().length() == 0) {
             errorMessage += "No valid email address!\n"; 
         }
-
+        
+        /*
         if (phoneField.getText() == null || phoneField.getText().length() == 0) {
             errorMessage += "No valid phone number!\n"; 
         } else {
@@ -132,11 +131,13 @@ public class NewUserDialogController {
                 errorMessage += "No valid phone number (must be an integer)!\n"; 
             }
         }
+        */
     /*
         if (cityField.getText() == null || cityField.getText().length() == 0) {
             errorMessage += "No valid city!\n"; 
         }
     */
+        /*
         if (birthdayField.getText() == null || birthdayField.getText().length() == 0) {
             errorMessage += "No valid birthday!\n";
         } else {
@@ -144,6 +145,7 @@ public class NewUserDialogController {
                 errorMessage += "No valid birthday. Use the format dd.mm.yyyy!\n";
             }
         }
+        */
 
         if (errorMessage.length() == 0) {
             return true;
