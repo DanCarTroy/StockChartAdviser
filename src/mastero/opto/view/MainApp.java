@@ -21,6 +21,10 @@ public class MainApp extends Application {
 	private Stage primaryStage = new Stage();
 	private static BorderPane mainLayout = new BorderPane();
 	XYChart.Series<String,Number> currentDataSeries = new XYChart.Series<String, Number>();
+
+	public MainApp(){
+		currentDataSeries = getCurrentSeries();
+	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
@@ -101,10 +105,16 @@ public class MainApp extends Application {
 		}
 
 		XYChart.Series<String,Number> series = new XYChart.Series<String, Number>();
-		for (int i = range; i > -1;i--) {
+		for (int i = range - 1; i > -1;i--) {
 			series.getData().add(new XYChart.Data<String, Number>(dateStrings.get(i), closePrice.get(i)));
 		}
+		if (series == null){
+			System.out.println("Null");
+		}
+		else
+			System.out.println(series.getData().size());
 		currentDataSeries = copySeries(series);
+		System.out.println(currentDataSeries.getData().size());
 		return series;
 	}
 
@@ -122,7 +132,6 @@ public class MainApp extends Application {
 	}
 
 	public static void main(String[] args) {
-
 		launch(args);
 	}
 }

@@ -8,8 +8,6 @@ import java.util.ArrayList;
  * Created by LucienChu on 2017-03-03.
  */
 public class DataAnalysis {
-    MainApp main = new MainApp();
-    XYChart.Series inData = main.getCurrentSeries();
     ArrayList<String> dateStrings = new ArrayList<>();
     ArrayList<Number> price = new ArrayList<>();
     public static final int TWENTY = 20;
@@ -17,12 +15,12 @@ public class DataAnalysis {
     public static final int HUNDRED = 100;
     public static final int TWO_HUNDRED = 200;
 
-    public DataAnalysis(){
-        int size = inData.getData().size();
+    public DataAnalysis(XYChart.Series data){
+        int size = data.getData().size();
         for(int i = 0; i < size; i++){
-            XYChart.Data data = (XYChart.Data)inData.getData().get(i);
-            dateStrings.add((String) data.getXValue());
-            price.add((Number) data.getYValue());
+            XYChart.Data aData = (XYChart.Data)data.getData().get(i);
+            dateStrings.add((String) aData.getXValue());
+            price.add((Number) aData.getYValue());
         }
     }
 
@@ -35,6 +33,7 @@ public class DataAnalysis {
             float smaPrice = sum(i, j) / walk;
             temp1.add(smaPrice);
             temp0.add(dateStrings.get(initialPosition));
+            initialPosition++;
         }
         XYChart.Series<String, Number> temp = new XYChart.Series<String, Number>();
         for(int i = 0; i < temp0.size(); i++)
@@ -49,16 +48,16 @@ public class DataAnalysis {
         }
         return total;
     }
-    public XYChart.Series<String, Number> SMA20(int walk) {
+    public XYChart.Series<String, Number> SMA20() {
         return SMA(TWENTY);
     }
-    public XYChart.Series<String, Number> SMA50(int walk) {
+    public XYChart.Series<String, Number> SMA50() {
         return SMA(FIFTY);
     }
-    public XYChart.Series<String, Number> SMA100(int walk) {
+    public XYChart.Series<String, Number> SMA100() {
         return SMA(HUNDRED);
     }
-    public XYChart.Series<String, Number> SMA200(int walk) {
+    public XYChart.Series<String, Number> SMA200() {
         return SMA(TWO_HUNDRED);
     }
 
