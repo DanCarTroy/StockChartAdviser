@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 //import mastero.opto.model.User;
 
-public class createNewUserDialogController {
+public class NewUserDialogController {
 
     @FXML
     private TextField firstNameField;
