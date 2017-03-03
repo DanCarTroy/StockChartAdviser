@@ -10,21 +10,21 @@ import javafx.stage.Stage;
 public class NewUserDialogController {
 
     @FXML
+    private TextField userNameField;
+    @FXML
     private TextField firstNameField;
     @FXML
     private TextField lastNameField;
     @FXML
-    private TextField streetField;
+    private TextField phoneField;
     @FXML
-    private TextField postalCodeField;
-    @FXML
-    private TextField cityField;
+    private TextField emailField;
     @FXML
     private TextField birthdayField;
 
 
     private Stage dialogStage;
-    private Person person;
+    private User user;
     private boolean okClicked = false;
 
     /**
@@ -49,7 +49,8 @@ public class NewUserDialogController {
      * 
      * @param person
      */
-    public void setPerson(Person person) {
+    /*
+    public void setPerson(User person) {
         this.person = person;
 
         firstNameField.setText(person.getFirstName());
@@ -60,7 +61,8 @@ public class NewUserDialogController {
         birthdayField.setText(DateUtil.format(person.getBirthday()));
         birthdayField.setPromptText("dd.mm.yyyy");
     }
-
+     */
+    
     /**
      * Returns true if the user clicked OK, false otherwise.
      * 
@@ -76,12 +78,13 @@ public class NewUserDialogController {
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-            person.setFirstName(firstNameField.getText());
-            person.setLastName(lastNameField.getText());
-            person.setStreet(streetField.getText());
-            person.setPostalCode(Integer.parseInt(postalCodeField.getText()));
-            person.setCity(cityField.getText());
-            person.setBirthday(DateUtil.parse(birthdayField.getText()));
+            user.setUserName(userNameField.getText());
+            user.setFirstName(firstNameField.getText());
+            user.setLastName(lastNameField.getText());
+            user.setEmail(emailField.getText());
+            user.setPhone(Integer.parseInt(phoneField.getText()));
+            //user.setCity(cityField.getText());
+            user.setBirthday(DateUtil.parse(birthdayField.getText()));
 
             okClicked = true;
             dialogStage.close();
