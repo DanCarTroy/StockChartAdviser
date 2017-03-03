@@ -117,6 +117,10 @@ public class MainApp extends Application {
 		return copy;
 	}
 
+	public XYChart.Series<String, Number> getCurrentSeries(){
+		return copySeries(currentDataSeries);
+	}
+
 	public static void main(String[] args) {
 
 		launch(args);
