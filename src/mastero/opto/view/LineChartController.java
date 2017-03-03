@@ -78,4 +78,6 @@ public class LineChartController {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
     }
+
+
 }
