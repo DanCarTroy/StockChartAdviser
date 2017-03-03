@@ -20,7 +20,7 @@ import static java.util.Collections.reverse;
 public class MainApp extends Application {
 	private Stage primaryStage = new Stage();
 	private static BorderPane mainLayout = new BorderPane();
-
+	XYChart.Series<String,Number> currentDataSeries = new XYChart.Series<String, Number>();
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
@@ -72,14 +72,13 @@ public class MainApp extends Application {
 		catch(FileNotFoundException e){
 			e.getStackTrace();
 		}
-
 		XYChart.Series<String,Number> series = new XYChart.Series<String, Number>();
 		for (int i = closePrice.size() - 1; i > -1;i--) {
 			series.getData().add(new XYChart.Data<String, Number>(dateStrings.get(i), closePrice.get(i)));
 		}
+		currentDataSeries = copySeries(series);
 		return series;
 	}
-
 	public XYChart.Series<String, Number> getChartData(int range){
 		Scanner csvFile;
 		DecimalFormat f = new DecimalFormat("###.##");
@@ -105,9 +104,18 @@ public class MainApp extends Application {
 		for (int i = range; i > -1;i--) {
 			series.getData().add(new XYChart.Data<String, Number>(dateStrings.get(i), closePrice.get(i)));
 		}
+		currentDataSeries = copySeries(series);
 		return series;
 	}
 
+	public static XYChart.Series<String, Number> copySeries(XYChart.Series<String, Number> target){
+		XYChart.Series<String, Number> copy = new XYChart.Series<String, Number>();
+		int size = target.getData().size();
+		for(int i = 0; i < size; i++){
+			copy.getData().add(target.getData().get(i));
+		}
+		return copy;
+	}
 
 	public static void main(String[] args) {
 
