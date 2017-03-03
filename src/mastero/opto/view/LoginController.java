@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert.AlertType;
 import mastero.opto.MainApp;
 import mastero.opto.model.User;
@@ -38,6 +40,23 @@ public class LoginController {
         this.mainApp = mainApp;
     }
 
+    /*
+     * Runs when the user presses Enter in the passwordField. Binding is done in FXML.
+     */
+    @FXML
+    private void handleEnterPressed(KeyEvent event)
+    {
+        if (event.getCode() == KeyCode.ENTER) {
+
+            handleLogin();
+        }
+    }
+
+
+    /*
+     * The FXML sheet automatically binds the Login button to
+     * the handleLogin method. No need to do loginButton.setOnAction...
+     */
     @FXML
     private void handleLogin()
     {
@@ -66,6 +85,7 @@ public class LoginController {
 			usernameField.getStyleClass().add("error");
 			passwordField.getStyleClass().add("error");
 
+			// Invalid user alert
 			Alert alert = new Alert(AlertType.ERROR);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("Login Failed");
@@ -74,6 +94,9 @@ public class LoginController {
             alert.showAndWait();
 
 		}
+
+		usernameField.setText("");
+		passwordField.setText("");
     }
 
     public User verifyLogin(String username, String password) {
