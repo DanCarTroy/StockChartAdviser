@@ -106,32 +106,37 @@ public class NewUserDialogController {
      */
     private boolean isInputValid() {
         String errorMessage = "";
-
+        
+        if (userNameField.getText() == null || userNameField.getText().length() == 0) 
+        {            
+            errorMessage += "No valid first name!\n";         
+        }
+        
         if (firstNameField.getText() == null || firstNameField.getText().length() == 0) {
             errorMessage += "No valid first name!\n"; 
         }
         if (lastNameField.getText() == null || lastNameField.getText().length() == 0) {
             errorMessage += "No valid last name!\n"; 
         }
-        if (streetField.getText() == null || streetField.getText().length() == 0) {
-            errorMessage += "No valid street!\n"; 
+        if (emailField.getText() == null || emailField.getText().length() == 0) {
+            errorMessage += "No valid email address!\n"; 
         }
 
-        if (postalCodeField.getText() == null || postalCodeField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n"; 
+        if (phoneField.getText() == null || phoneField.getText().length() == 0) {
+            errorMessage += "No valid phone number!\n"; 
         } else {
             // try to parse the postal code into an int.
             try {
-                Integer.parseInt(postalCodeField.getText());
+                Integer.parseInt(phoneField.getText());
             } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n"; 
+                errorMessage += "No valid phone number (must be an integer)!\n"; 
             }
         }
-
+    /*
         if (cityField.getText() == null || cityField.getText().length() == 0) {
             errorMessage += "No valid city!\n"; 
         }
-
+    */
         if (birthdayField.getText() == null || birthdayField.getText().length() == 0) {
             errorMessage += "No valid birthday!\n";
         } else {
