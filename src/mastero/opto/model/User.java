@@ -8,6 +8,7 @@ public class User {
 	private final StringProperty userName;
 	private final StringProperty firstName;
 	private final StringProperty lastName;
+	private final StringProperty password;
 	private final StringProperty emailAddress;
 
 	/**
@@ -18,6 +19,7 @@ public class User {
 		firstName = new SimpleStringProperty(null);
 		lastName = new SimpleStringProperty(null);
 		emailAddress = new SimpleStringProperty(null);
+		password = new SimpleStringProperty(null);
 
 	}
 
@@ -34,6 +36,7 @@ public class User {
 		firstName = new SimpleStringProperty(first);
 		lastName = new SimpleStringProperty(last);
 		emailAddress = new SimpleStringProperty(email);
+		password = new SimpleStringProperty(null);
 	}
 
 
@@ -60,6 +63,11 @@ public class User {
 		return emailAddress.get();
 	}
 
+	public String getPassword()
+	{
+		return password.get();
+	}
+
 	// Mutators
 
 	public void setUserName(String name)
@@ -82,6 +90,11 @@ public class User {
 		emailAddress.set(email);
 	}
 
+	public void setPassword(String pass)
+	{
+		password.set(pass);
+	}
+
 	// Methods that return the property objects
 
 	public StringProperty userNameProperty() {
@@ -98,6 +111,10 @@ public class User {
 
 	public StringProperty emailAddressProperty(){
 		return emailAddress;
+	}
+
+	public StringProperty passwordProperty(){
+		return password;
 	}
 
 }

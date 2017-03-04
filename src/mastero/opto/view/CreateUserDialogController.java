@@ -1,11 +1,15 @@
 package mastero.opto.view;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mastero.opto.model.User;
+import mastero.opto.util.DBConnection;
 
 public class CreateUserDialogController {
 
@@ -15,6 +19,8 @@ public class CreateUserDialogController {
     private TextField firstNameField;
     @FXML
     private TextField lastNameField;
+    @FXML
+    private TextField passwordField;
     @FXML
     private TextField phoneField;
     @FXML
@@ -28,6 +34,14 @@ public class CreateUserDialogController {
     private boolean okClicked = false;
 
     /**
+     * The constructor.
+     * The constructor is called before the initialize() method.
+     */
+    public CreateUserDialogController() {
+    	this.user = new User("default");
+    }
+
+    /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
      */
@@ -37,7 +51,7 @@ public class CreateUserDialogController {
 
     /**
      * Sets the stage of this dialog.
-     * 
+     *
      * @param dialogStage
      */
     public void setDialogStage(Stage dialogStage) {
@@ -46,7 +60,7 @@ public class CreateUserDialogController {
 
     /**
      * Sets the person to be edited in the dialog.
-     * 
+     *
      * @param person
      */
     /*
@@ -62,10 +76,10 @@ public class CreateUserDialogController {
         birthdayField.setPromptText("dd.mm.yyyy");
     }
      */
-    
+
     /**
      * Returns true if the user clicked OK, false otherwise.
-     * 
+     *
      * @return
      */
     public boolean isOkClicked() {
@@ -82,7 +96,14 @@ public class CreateUserDialogController {
             user.setFirstName(firstNameField.getText());
             user.setLastName(lastNameField.getText());
             user.setEmailAddress(emailField.getText());
+            user.setPassword(passwordField.getText());
             //user.setBirthday(DateUtil.parse(birthdayField.getText()));
+
+            DBConnection newConnection = new DBConnection();
+
+            int result = newConnection.executeUpdate("INSERT INTO %s VALUES ('%s', '%s')", "user (user_login, user_pass)",
+    				user.getUserName(), user.getPassword());
+            System.out.println("result = " + result);
 
             okClicked = true;
             dialogStage.close();
@@ -99,42 +120,42 @@ public class CreateUserDialogController {
 
     /**
      * Validates the user input in the text fields.
-     * 
+     *
      * @return true if the input is valid
      */
     private boolean isInputValid() {
         String errorMessage = "";
-        
-        if (userNameField.getText() == null || userNameField.getText().length() == 0) 
+
+        if (userNameField.getText() == null || userNameField.getText().length() == 0)
         {
-            errorMessage += "No valid first name!\n";  
+            errorMessage += "No valid user name!\n";
         }
-        
+
         if (firstNameField.getText() == null || firstNameField.getText().length() == 0) {
-            errorMessage += "No valid first name!\n"; 
+            errorMessage += "No valid first name!\n";
         }
         if (lastNameField.getText() == null || lastNameField.getText().length() == 0) {
-            errorMessage += "No valid last name!\n"; 
+            errorMessage += "No valid last name!\n";
         }
         if (emailField.getText() == null || emailField.getText().length() == 0) {
-            errorMessage += "No valid email address!\n"; 
+            errorMessage += "No valid email address!\n";
         }
-        
+
         /*
         if (phoneField.getText() == null || phoneField.getText().length() == 0) {
-            errorMessage += "No valid phone number!\n"; 
+            errorMessage += "No valid phone number!\n";
         } else {
             // try to parse the postal code into an int.
             try {
                 Integer.parseInt(phoneField.getText());
             } catch (NumberFormatException e) {
-                errorMessage += "No valid phone number (must be an integer)!\n"; 
+                errorMessage += "No valid phone number (must be an integer)!\n";
             }
         }
         */
     /*
         if (cityField.getText() == null || cityField.getText().length() == 0) {
-            errorMessage += "No valid city!\n"; 
+            errorMessage += "No valid city!\n";
         }
     */
         /*

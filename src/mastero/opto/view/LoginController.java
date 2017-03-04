@@ -24,7 +24,7 @@ public class LoginController {
 	private TextField usernameField;
 	@FXML
 	private PasswordField passwordField;
-	
+
 
 	// Reference to the main application.
     private MainApp mainApp;
@@ -100,7 +100,7 @@ public class LoginController {
 		usernameField.setText("");
 		passwordField.setText("");
     }
-    
+
     @FXML
     private void handleSignUp()
     {
@@ -122,8 +122,8 @@ public class LoginController {
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("Login Failed");
             alert.setHeaderText("Invalid user or password");
-            alert.setContentText("Please try entering again!");
-			e.printStackTrace(); */
+            alert.setContentText("Please try entering again!");*/
+			e.printStackTrace();
 		}
 		return null;
 	}
