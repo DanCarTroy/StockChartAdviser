@@ -10,7 +10,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mastero.opto.view.MainApp;
+import mastero.opto.MainApp;
 import java.io.IOException;
 
 /**
