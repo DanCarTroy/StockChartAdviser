@@ -109,16 +109,23 @@ public class MainApp extends Application {
         }
     }
 
-    public static void showMainWindow() throws IOException{
+    public void showMainWindow() throws IOException{
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(MainApp.class.getResource("MainWindow.fxml"));
-		mainLayout.setCenter(loader.load());
+		loader.setLocation(MainApp.class.getResource("view/MainWindow.fxml"));
+		mainLayout = loader.load();
+
+
+		// Show the scene containing the root layout.
+        Scene scene = new Scene(mainLayout);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
 	}
 
 
 	public static void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(MainApp.class.getResource("LineChartView.fxml"));
+		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
 		BorderPane chartView = loader.load();
 		mainLayout.setCenter(chartView);
 	}

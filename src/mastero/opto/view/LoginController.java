@@ -51,6 +51,7 @@ public class LoginController {
         if (event.getCode() == KeyCode.ENTER) {
 
             handleLogin();
+
         }
     }
 
@@ -74,12 +75,14 @@ public class LoginController {
 			ViewLoader v = new ViewLoader(Constants.FXML_MainPage);
 			stage.setScene(new Scene(v.getParent())); */
 
+
 			try {
 				mainApp.showMainWindow();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			// Testing login
 			/*
             Alert alert = new Alert(AlertType.CONFIRMATION);
