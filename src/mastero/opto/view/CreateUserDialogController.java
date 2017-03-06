@@ -101,8 +101,8 @@ public class CreateUserDialogController {
 
             DBConnection newConnection = new DBConnection();
 
-            int result = newConnection.executeUpdate("INSERT INTO %s VALUES ('%s', '%s')", "user (user_login, user_pass)",
-    				user.getUserName(), user.getPassword());
+            int result = newConnection.executeUpdate("INSERT INTO %s VALUES ('%s', '%s', '%s', '%s', '%s')", "user (user_login, user_pass, first_name, last_name, user_email)",
+    				user.getUserName(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getEmailAddress());
             System.out.println("result = " + result);
 
             okClicked = true;

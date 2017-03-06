@@ -16,9 +16,25 @@ public class DBConnection /*implements Constants*/ {
 	private Connection myCon;
 
 	// Info to connect to the database
-	private static final String url = "jdbc:mysql://localhost:3306/stock_adviser_db";
-	private static final String user = "root";
-	private static final String pwd = "DHCTAMPM1989";
+	private static final String url = "jdbc:mysql://35.185.65.46:3306/stock_adviser_db";
+	private static final String username = "team10";
+	private static final String password = "RamiZhiEmmaDaniel";
+	// TODO: fill this in
+    // The instance connection name can be obtained from the instance overview page in Cloud Console
+    // or by running "gcloud sql instances describe <instance> | grep connectionName".
+    String instanceConnectionName = "sodium-foundry-160422:us-east1:comp354-group10-micro";
+
+    // TODO: fill this in
+    // The database from which to list tables.
+    String databaseName = "stock_adviser_db";
+
+
+    //[START doc-example]
+    String jdbcUrl = String.format(
+        "jdbc:mysql://google/%s?cloudSqlInstance=%s&"
+            + "socketFactory=com.google.cloud.sql.mysql.SocketFactory",
+        databaseName,
+        instanceConnectionName);
 
 	/**
 	 * Default constructor. Creates an instance object that will establish a connection.
@@ -49,7 +65,7 @@ public class DBConnection /*implements Constants*/ {
 
 		try
 		{
-			myCon = DriverManager.getConnection(url, user, pwd);
+			myCon = DriverManager.getConnection(url, username, password);
 		}
 		catch (SQLException e)
 		{
