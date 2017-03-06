@@ -12,7 +12,7 @@ import mastero.opto.MainApp;
 import mastero.opto.model.User;
 import mastero.opto.util.DBConnection;
 
-
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -74,7 +74,14 @@ public class LoginController {
 			ViewLoader v = new ViewLoader(Constants.FXML_MainPage);
 			stage.setScene(new Scene(v.getParent())); */
 
+			try {
+				mainApp.showMainWindow();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// Testing login
+			/*
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("Login Successful");
@@ -82,6 +89,9 @@ public class LoginController {
             alert.setContentText("You logged in successfully. Congrats!");
 
             alert.showAndWait();
+            */
+
+
 		}else {
 
 			usernameField.getStyleClass().add("error");

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
+   <bottom>
+      <Button mnemonicParsing="false" onAction="#showMainFrame" text="Home" BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <SplitPane dividerPositions="0.33544973544973544" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <MenuButton layoutY="177.0" mnemonicParsing="false" text="Historical Data">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#oneYearDatabtn" text="1 year" />
+                      <MenuItem mnemonicParsing="false" onAction="#twoYearDatabtn" text="2 years" />
+                        <MenuItem mnemonicParsing="false" onAction="#fiveYearDatabtn" text="5 years" />
+                    </items>
+                  </MenuButton>
+                  <MenuButton layoutX="7.0" layoutY="315.0" mnemonicParsing="false" text="SMAs">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="20 days" />
+                      <MenuItem mnemonicParsing="false" text="50 dyas" />
+                        <MenuItem mnemonicParsing="false" text="100 days" />
+                        <MenuItem mnemonicParsing="false" text="200 days" />
+                    </items>
+                  </MenuButton>
+                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Dattat" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <LineChart fx:id="lineChart" layoutX="113.0" layoutY="153.0" prefHeight="671.0" prefWidth="657.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </center>
+</BorderPane>
