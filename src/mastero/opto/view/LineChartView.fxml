@@ -34,7 +34,7 @@
                         <MenuItem fx:id="sma200" mnemonicParsing="false" onAction="#showSMA200" text="200 days" />
                     </items>
                   </MenuButton>
-                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Dattat" />
+                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
