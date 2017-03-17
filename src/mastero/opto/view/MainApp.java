@@ -91,7 +91,7 @@ public class MainApp extends Application {
 		int dateStringIndex = 0;
 		int closePriceIndex = 4;
 		try{
-			csvFile = new Scanner(new File("src/mastero/opto/view/Sample data.csv"));
+			csvFile = new Scanner(new File("src/mastero/opto/view/Sample data.csv"));//aaa
 			csvFile.useDelimiter(",");
 			csvFile.nextLine();
 			while(csvFile.hasNext()){
