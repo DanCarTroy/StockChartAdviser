@@ -112,7 +112,7 @@ public class MainApp extends Application {
 
     public void showMainFrame()throws IOException{
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(MainApp.class.getResource("MainFrame.fxml"));
+		loader.setLocation(MainApp.class.getResource("view/MainFrame.fxml"));
 		mainLayout = (BorderPane) loader.load();
 		Scene scene = new Scene(mainLayout);
 		primaryStage.setScene(scene);
@@ -140,7 +140,7 @@ public class MainApp extends Application {
 
     public static void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(MainApp.class.getResource("LineChartView.fxml"));
+		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
 		BorderPane chartView = loader.load();
 		mainLayout.setCenter(chartView);
 	}
