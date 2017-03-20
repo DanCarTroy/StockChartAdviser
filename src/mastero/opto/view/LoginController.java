@@ -77,7 +77,7 @@ public class LoginController {
 
 
 			try {
-				mainApp.showMainWindow();
+				mainApp.showMainFrame();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

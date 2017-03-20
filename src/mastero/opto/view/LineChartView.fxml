@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
    <bottom>
       <Button mnemonicParsing="false" onAction="#showMainFrame" text="Home" BorderPane.alignment="CENTER" />
    </bottom>
@@ -23,13 +28,13 @@
                   </MenuButton>
                   <MenuButton layoutX="7.0" layoutY="315.0" mnemonicParsing="false" text="SMAs">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="20 days" />
-                      <MenuItem mnemonicParsing="false" text="50 dyas" />
-                        <MenuItem mnemonicParsing="false" text="100 days" />
-                        <MenuItem mnemonicParsing="false" text="200 days" />
+                      <MenuItem fx:id="sma20" mnemonicParsing="false" onAction="#showSMA20" text="20 days" />
+                      <MenuItem fx:id="sma50" mnemonicParsing="false" onAction="#showSMA50" text="50 dyas" />
+                        <MenuItem fx:id="sma100" mnemonicParsing="false" onAction="#showSMA100" text="100 days" />
+                        <MenuItem fx:id="sma200" mnemonicParsing="false" onAction="#showSMA200" text="200 days" />
                     </items>
                   </MenuButton>
-                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Dattat" />
+                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">

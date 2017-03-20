@@ -17,10 +17,11 @@ import java.io.IOException;
  * Created by LucienChu on 2017-02-25.
  */
 public class LineChartController {
-    private MainApp main = new MainApp();
+    MainApp main = new MainApp();
     private static final int ONE_YEAR = 365;
     private static final int TWO_YEAR = 730;
     private static final int FIVE_YEAR = 1825;
+    XYChart.Series<String, Number> sma = new XYChart.Series<String, Number>();
     @FXML Button allDataButton;
     @FXML Button oneYearDataButton;
     @FXML Button twoYearDataButton;
@@ -77,5 +78,45 @@ public class LineChartController {
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
+    }
+
+    public void showSMA20(ActionEvent event) throws IOException{
+        lineChart.getData().removeAll(sma);
+        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        sma = analysis.SMA20();
+        if (sma.getData().size() == 0)
+            showErroPopUp();
+        else
+            lineChart.getData().add(sma);
+    }
+
+    public void showSMA50(ActionEvent event) throws IOException{
+        lineChart.getData().removeAll(sma);
+        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        sma = analysis.SMA50();
+        if (sma.getData().size() == 0)
+            showErroPopUp();
+        else
+            lineChart.getData().add(sma);
+    }
+
+    public void showSMA100(ActionEvent event) throws IOException{
+        lineChart.getData().removeAll(sma);
+        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        sma = analysis.SMA100();
+        if (sma.getData().size() == 0)
+            showErroPopUp();
+        else
+            lineChart.getData().add(sma);
+    }
+
+    public void showSMA200(ActionEvent event) throws IOException{
+        lineChart.getData().removeAll(sma);
+        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        sma = analysis.SMA200();
+        if (sma.getData().size() == 0)
+            showErroPopUp();
+        else
+            lineChart.getData().add(sma);
     }
 }
