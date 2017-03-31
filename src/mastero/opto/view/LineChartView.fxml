@@ -19,7 +19,7 @@
       <Button mnemonicParsing="false" onAction="#showMainFrame" text="Home" BorderPane.alignment="CENTER" />
    </bottom>
    <center>
-      <SplitPane dividerPositions="0.33544973544973544" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.2606516290726817" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -39,7 +39,7 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <LineChart fx:id="lineChart" layoutX="113.0" layoutY="153.0" prefHeight="671.0" prefWidth="657.0" stylesheets="@lineChart.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <LineChart fx:id="lineChart" layoutY="14.0" prefHeight="671.0" prefWidth="657.0" stylesheets="@lineChart.css" AnchorPane.bottomAnchor="-14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="14.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>
