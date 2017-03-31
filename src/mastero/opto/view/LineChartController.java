@@ -147,6 +147,7 @@ public class LineChartController {
             showSMA50();
         else
             lineChart.getData().remove(sma50);
+        //asfsdfdsf asdfdsfdas
     }
 
     public void handle100Checkboxes(){
