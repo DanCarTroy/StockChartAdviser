@@ -1,8 +1,13 @@
 package mastero.opto;
 
+import org.apache.commons.io.FileUtils;
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -152,8 +157,10 @@ public class MainApp extends Application {
 		ArrayList<String> dateStrings = new ArrayList<>();
 		int dateStringIndex = 0;
 		int closePriceIndex = 4;
+
+		getCSVFromYahoo();
 		try{
-			csvFile = new Scanner(new File("src/mastero/opto/view/Sample data.csv"));
+			csvFile = new Scanner(new File("src/mastero/opto/view/tmpData.csv"/*"src/mastero/opto/view/Sample data.csv"*/));
 			csvFile.useDelimiter(",");
 			csvFile.nextLine();
 			while(csvFile.hasNext()){
@@ -180,8 +187,10 @@ public class MainApp extends Application {
 		ArrayList<String> dateStrings = new ArrayList<>();
 		int dateStringIndex = 0;
 		int closePriceIndex = 4;
+
+		getCSVFromYahoo();
 		try{
-			csvFile = new Scanner(new File("src/mastero/opto/view/Sample data.csv"));//aaa
+			csvFile = new Scanner(new File("src/mastero/opto/view/tmpData.csv"/*"src/mastero/opto/view/Sample data.csv"*/));//aaa
 			csvFile.useDelimiter(",");
 			csvFile.nextLine();
 			while(csvFile.hasNext()){
@@ -220,6 +229,24 @@ public class MainApp extends Application {
     public XYChart.Series<String, Number> getCurrentSeries(){
 		return copySeries(currentDataSeries);
 	}
+
+    public static void getCSVFromYahoo()
+    {
+    	URL source = null;
+		try {
+			source = new URL("http://ichart.finance.yahoo.com/table.csv?s=AAPL&a=11&b=15&c=2007&d=03&e=31&f=2017&g=d&ignore=.csv");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	File tmpFile = new File("src/mastero/opto/view/tmpData.csv");
+    	try {
+			FileUtils.copyURLToFile(source, tmpFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 
     /**
      * Returns the main stage.
