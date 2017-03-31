@@ -44,6 +44,7 @@ public class LineChartController {
 
     public void allDatabtn()throws IOException{
         lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
         XYChart.Series data = main.getChartData();
         if (main.getChartData().getData().size() == 0)
             showErroPopUp();
@@ -55,6 +56,7 @@ public class LineChartController {
 
     public void oneYearDatabtn() throws IOException{
         lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
         XYChart.Series data = main.getChartData(ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -66,6 +68,7 @@ public class LineChartController {
 
     public void twoYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
         XYChart.Series data = main.getChartData(TWO_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -77,6 +80,7 @@ public class LineChartController {
 
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
         XYChart.Series data = main.getChartData(FIVE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -97,6 +101,7 @@ public class LineChartController {
     }
 
     public void showSMA20(){
+        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
         sma20 = analysis.SMA20();
         sma20.setName("SMA 20");
@@ -107,6 +112,7 @@ public class LineChartController {
 
 
     public void showSMA50 (){
+        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
         sma50 = analysis.SMA50();
         sma50.setName("SMA 50");
@@ -117,6 +123,7 @@ public class LineChartController {
 
 
     public void showSMA100(){
+        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
         sma100 = analysis.SMA100();
         sma100.setName("SMA 100");
@@ -126,6 +133,7 @@ public class LineChartController {
     }
 
     public void showSMA200(){
+        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
         sma200 = analysis.SMA200();
         sma200.setName("SMA 200");
