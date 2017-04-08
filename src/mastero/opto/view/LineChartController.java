@@ -46,7 +46,7 @@ public class LineChartController {
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
         XYChart.Series data = main.getChartData();
-        if (main.getChartData().getData().size() == 0)
+        if (data.getData().size() == 0)
             showErroPopUp();
         else {
             data.setName("All data");
