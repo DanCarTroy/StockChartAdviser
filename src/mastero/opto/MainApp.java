@@ -146,7 +146,7 @@ public class MainApp extends Application {
     public static void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
-		BorderPane chartView = loader.load();
+		AnchorPane chartView = loader.load();
 		mainLayout.setCenter(chartView);
 	}
 

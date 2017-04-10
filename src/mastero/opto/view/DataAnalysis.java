@@ -27,8 +27,8 @@ public class DataAnalysis {
     public XYChart.Series<String, Number> SMA(int walk) {
         ArrayList<String> temp0 = new ArrayList<>();
         ArrayList<Number> temp1 = new ArrayList<>();
-        int initialPosition = walk / 2 + 1;
-        for (int i = 0; i + walk <= price.size(); i++) {
+        int initialPosition = walk;
+        for (int i = 0; i < price.size() - walk ; i++) {
             int j = i + walk - 1;
             float smaPrice = sum(i, j) / walk;
             temp1.add(smaPrice);
