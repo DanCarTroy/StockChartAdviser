@@ -10,15 +10,46 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mastero.opto.MainApp;
+import mastero.opto.model.Stock;
+
 import java.io.IOException;
 
 /**
  * Created by LucienChu on 2017-02-25.
  */
 public class LineChartController {
+
+	@FXML
+    private TableView<Stock> stockTable;
+    @FXML
+    private TableColumn<Stock, String> stockSymbolColumn;
+    @FXML
+    private TableColumn<Stock, String> stockNameColumn;
+
+    @FXML
+    private TableView<Stock> mostActiveTable;
+    @FXML
+    private TableColumn<Stock, String> activeSymbolColumn;
+    @FXML
+    private TableColumn<Stock, String> activeNameColumn;
+
+    @FXML
+    private TableView<Stock> dow30Table;
+    @FXML
+    private TableColumn<Stock, String> d30SymbolColumn;
+    @FXML
+    private TableColumn<Stock, String> d30NameColumn;
+
+    private Stock currentStock;
+
+
+    //private MainApp main;
     MainApp main = new MainApp();
     private static final int ONE_YEAR = 365;
     private static final int TWO_YEAR = 730;
@@ -37,6 +68,75 @@ public class LineChartController {
     @FXML CheckBox sma_100;
     @FXML CheckBox sma_200;
     @FXML LineChart<String, Number>  lineChart;
+
+
+    /**
+     * The constructor.
+     * The constructor is called before the initialize() method.
+     */
+    public LineChartController() {
+    }
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    private void initialize() {
+
+    	try{
+        // Initialize the favorite stock table with the two columns.
+    	stockSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	stockNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
+        stockTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+     // Initialize the Dow30 stock table with the two columns.
+    	d30SymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	d30NameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
+        dow30Table.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+     // Initialize the Most Active stock table with the two columns.
+    	activeSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	activeNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
+        mostActiveTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+    	}
+    	catch(NullPointerException e)
+    	{
+    		System.out.println("NASDAQ, CNN, or Yahoo did not cooperate :(");
+    	}
+    }
+
+    public void setCurrentStock(Stock stk){
+    	currentStock = stk;
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     *
+     * @param mainApp
+     */
+    public void setMainApp(MainApp mainApp) {
+        //main = mainApp;
+
+        // Add observable list data to the table
+        stockTable.setItems(mainApp.getStockList());
+        dow30Table.setItems(mainApp.getDow30List());
+        mostActiveTable.setItems(mainApp.getMostActiveList());
+    }
+
     @FXML
     private void showMainFrame() throws IOException{
         main.showMainWindow();
@@ -45,7 +145,7 @@ public class LineChartController {
     public void allDatabtn()throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        XYChart.Series data = main.getChartData();
+        XYChart.Series data = currentStock.getChartData();
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -57,7 +157,7 @@ public class LineChartController {
     public void oneYearDatabtn() throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        XYChart.Series data = main.getChartData(ONE_YEAR);
+        XYChart.Series data = currentStock.getChartData(ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -69,7 +169,7 @@ public class LineChartController {
     public void twoYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        XYChart.Series data = main.getChartData(TWO_YEAR);
+        XYChart.Series data = currentStock.getChartData(TWO_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -81,7 +181,7 @@ public class LineChartController {
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        XYChart.Series data = main.getChartData(FIVE_YEAR);
+        XYChart.Series data = currentStock.getChartData(FIVE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -102,7 +202,7 @@ public class LineChartController {
 
     public void showSMA20(){
         lineChart.setCreateSymbols(false);
-        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        DataAnalysis analysis = new DataAnalysis(currentStock.getCurrentSeries());
         sma20 = analysis.SMA20();
         sma20.setName("SMA 20");
         if (sma20.getData().size() != 0)
@@ -113,7 +213,7 @@ public class LineChartController {
 
     public void showSMA50 (){
         lineChart.setCreateSymbols(false);
-        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        DataAnalysis analysis = new DataAnalysis(currentStock.getCurrentSeries());
         sma50 = analysis.SMA50();
         sma50.setName("SMA 50");
         if (sma50.getData().size() != 0)
@@ -124,7 +224,7 @@ public class LineChartController {
 
     public void showSMA100(){
         lineChart.setCreateSymbols(false);
-        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        DataAnalysis analysis = new DataAnalysis(currentStock.getCurrentSeries());
         sma100 = analysis.SMA100();
         sma100.setName("SMA 100");
         if (sma100.getData().size() != 0)
@@ -134,7 +234,7 @@ public class LineChartController {
 
     public void showSMA200(){
         lineChart.setCreateSymbols(false);
-        DataAnalysis analysis = new DataAnalysis(main.getCurrentSeries());
+        DataAnalysis analysis = new DataAnalysis(currentStock.getCurrentSeries());
         sma200 = analysis.SMA200();
         sma200.setName("SMA 200");
         if (sma200.getData().size() != 0)

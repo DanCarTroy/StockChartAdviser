@@ -18,11 +18,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mastero.opto.model.Stock;
 import mastero.opto.model.User;
 import mastero.opto.view.CreateUserDialogController;
+import mastero.opto.view.LineChartController;
 import mastero.opto.view.LoginController;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
@@ -38,17 +42,168 @@ public class MainApp extends Application {
 	private Stage primaryStage;
 	private StackPane loginForm;
 	private static BorderPane mainLayout = new BorderPane();
-	XYChart.Series<String,Number> currentDataSeries = new XYChart.Series<String, Number>();
 
 	public static User currentUser;
+
+
+	/**
+     * The data as an observable list of Stocks.
+     */
+    private ObservableList<Stock> stockList = FXCollections.observableArrayList();
+
+    private ObservableList<Stock> dow30List = FXCollections.observableArrayList();
+
+    private ObservableList<Stock> mostActiveList = FXCollections.observableArrayList();
 
 	/**
 	 * Default Constructor. Could be used later to initialize values.
 	 */
 	public MainApp()
 	{
-		currentDataSeries = getCurrentSeries();
+		// Add some sample data -- Will replace this with favorite stocks from the the user
+		stockList.add(new Stock("YHOO", "Yahoo"));
+		stockList.add(new Stock("AAPL", "Apple"));
+		stockList.add(new Stock("MSFT", "Microsoft"));
+		stockList.add(new Stock("TSLA", "Tesla Motors"));
+		stockList.add(new Stock("SNE", "Sony"));
+		stockList.add(new Stock("NTDOY", "Nintendo"));
+		stockList.add(new Stock("FCAU", "Fiat Chrysler"));
+		stockList.add(new Stock("BDRBF", "Bombardier"));
+
+		getDow30();
+
+		try{
+		getMostActive();
+		}
+		catch(JSONException e)
+		{
+			System.out.println("Could not get most active data. NASDAQ servers are busy :(");
+		}
+
+
 	}
+
+	private void getMostActive() throws org.json.JSONException {
+		// TODO Auto-generated method stub
+		ArrayList<String> stockNames = new ArrayList<String>();
+		ArrayList<String> stockSymbols = new ArrayList<String>();
+
+		// YQL (Yahoo Query Language) url --> preparing the url --> Getting the name.
+		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fb%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fh3%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
+		String JSONstring = Stock.getJASON(nameYqlUrl);
+		System.out.println("get most active jason = "+JSONstring);
+
+		String JSONsymbol = Stock.getJASON(symbolYqlUrl);
+		System.out.println("get most active jason = "+JSONsymbol);
+
+		JSONArray arr, arr2 = null;
+		try{
+
+			JSONObject j = new JSONObject(JSONstring);
+	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+
+	        JSONObject j2 = new JSONObject(JSONsymbol);
+	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+
+
+	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
+	        for(int i=0; i < arr.length(); i++)
+	        {
+
+	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
+	            String name = arr.getString(i);
+	            String symbol = arr2.getString(i);
+
+	            System.out.println(name);
+	            stockNames.add(name);
+
+	            System.out.println(symbol);
+	            stockSymbols.add(symbol);
+
+	            mostActiveList.add(new Stock(symbol, name));
+
+	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
+
+	        }
+		}
+		catch(JSONException e){
+			e.printStackTrace();
+		}
+
+
+	}
+
+	private void getDow30() {
+		// TODO Auto-generated method stub
+
+		ArrayList<String> stockNames = new ArrayList<String>();
+		ArrayList<String> stockSymbols = new ArrayList<String>();
+
+		// YQL (Yahoo Query Language) url --> preparing the url --> Getting the name.
+		//String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fb%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fdow30%2F'%20and%20xpath%3D'%2F%2Ftable%2F*%5Bcontains(.%2C%22Company%22)%5D%2F%2Fa'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
+		//String JSONstring = Stock.getJASON(nameYqlUrl);
+		//System.out.println("get most active jason = "+JSONstring);
+
+		String JSONsymbol = Stock.getJASON(symbolYqlUrl);
+		System.out.println("get dow30 jason = "+JSONsymbol);
+
+		JSONArray arr, arr2 = null;
+		try{
+
+			//JSONObject j = new JSONObject(JSONstring);
+	        //arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+
+	        JSONObject j2 = new JSONObject(JSONsymbol);
+	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+
+
+	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
+	        for(int i=0; i < arr2.length(); i++)
+	        {
+
+	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
+	            //String name = arr.getString(i);
+	            String symbol = arr2.getString(i);
+
+	           // System.out.println(name);
+	            //stockNames.add(name);
+
+	            System.out.println(symbol);
+	            stockSymbols.add(symbol);
+
+	            dow30List.add(new Stock(symbol, "cool"));
+
+	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
+
+	        }
+		}
+		catch(JSONException e){
+			e.printStackTrace();
+		}
+
+
+	}
+
+	/**
+     * Returns the data as an observable list of Stocks.
+     * Favorite stocks from the user.
+     * @return
+     */
+    public ObservableList<Stock> getStockList() {
+        return stockList;
+    }
+
+    public ObservableList<Stock> getDow30List() {
+        return dow30List;
+    }
+
+    public ObservableList<Stock> getMostActiveList() {
+        return mostActiveList;
+    }
 
 	@Override
     public void start(Stage primaryStage) {
@@ -130,7 +285,7 @@ public class MainApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
-		showMainWindow();
+		showChartView();
 	}
 
     public void showMainWindow() throws IOException{
@@ -149,164 +304,16 @@ public class MainApp extends Application {
 
 	}
 
-
-    public static void showChartView() throws IOException {
+    public void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
 		BorderPane chartView = loader.load();
 		mainLayout.setCenter(chartView);
+
+		// Give the controller access to the main app.
+        LineChartController controller = loader.getController();
+        controller.setMainApp(this);
 	}
-
-
-    public XYChart.Series<String, Number> getChartData(){
-		Scanner csvFile;
-		DecimalFormat f = new DecimalFormat("###.##");
-		ArrayList<Double> closePrice = new ArrayList<>();
-		ArrayList<String> dateStrings = new ArrayList<>();
-		int dateStringIndex = 0;
-		int closePriceIndex = 4;
-
-		getCSVFromYahoo();
-		try{
-			csvFile = new Scanner(new File("src/mastero/opto/view/tmpData.csv"/*"src/mastero/opto/view/Sample data.csv"*/));
-			csvFile.useDelimiter(",");
-			csvFile.nextLine();
-			while(csvFile.hasNext()){
-				String dataString = csvFile.nextLine();
-				closePrice.add(Double.parseDouble((f.format(Double.parseDouble(dataString.split(",")[closePriceIndex])))));
-				dateStrings.add(dataString.split(",")[dateStringIndex]);
-			}
-			csvFile.close();
-		}
-		catch(FileNotFoundException e){
-			e.getStackTrace();
-		}
-		XYChart.Series<String,Number> series = new XYChart.Series<String, Number>();
-		for (int i = closePrice.size() - 1; i > -1;i--) {
-			series.getData().add(new XYChart.Data<String, Number>(dateStrings.get(i), closePrice.get(i)));
-		}
-		currentDataSeries = copySeries(series);
-		return series;
-    }
-
-    public XYChart.Series<String, Number> getChartData(int range){
-
-		DecimalFormat f = new DecimalFormat("###.##");
-
-		LocalDate fromDate = LocalDate.now(ZoneId.of( "America/Montreal")).minusDays(range);
-		int year = fromDate.getYear();
-		int month = fromDate.getMonthValue();
-		int day = fromDate.getDayOfMonth();
-
-		XYChart.Series<String,Number> series = new XYChart.Series<String, Number>();
-
-		// YQL (Yahoo Query Language) url --> preparing the url with the range and stock that we want
-		String yqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20date%2C%20close%20from%20csv%20where%20url%3D'http%3A%2F%2Fichart.finance.yahoo.com%2Ftable.csv%3Fs%3D"
-		+"AAPL"+"%26a%3D"+month+"%26b%3D"+day+"%26c%3D"+year+"'%20and%20columns%3D'date%2Copen%2Chigh%2Clow%2Cclose%2Cvolume%2Cadj_close'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-
-		String JSONstring = getJASON(yqlUrl);
-		System.out.println("my jason = "+JSONstring);
-
-		JSONArray arr = null;
-		try{
-
-			JSONObject j = new JSONObject(JSONstring);
-	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("row");
-
-
-	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
-	        for(int i=arr.length()-1; i > 0; i--)
-	        {
-	            JSONObject obj = arr.getJSONObject(i);
-	            Double closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
-	            String dateString = obj.getString("date");
-
-	            series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
-
-	        }
-		}
-		catch(JSONException e){
-			e.printStackTrace();
-		}
-
-		if (series == null){
-			System.out.println("Null");
-		}
-		else
-			System.out.println(series.getData().size());
-		currentDataSeries = copySeries(series);
-		System.out.println(currentDataSeries.getData().size());
-		return series;
-	}
-
-    public static XYChart.Series<String, Number> copySeries(XYChart.Series<String, Number> target){
-		XYChart.Series<String, Number> copy = new XYChart.Series<String, Number>();
-		int size = target.getData().size();
-		for(int i = 0; i < size; i++){
-			copy.getData().add(target.getData().get(i));
-		}
-		return copy;
-	}
-
-    public XYChart.Series<String, Number> getCurrentSeries(){
-		return copySeries(currentDataSeries);
-	}
-
-    public static void getCSVFromYahoo()
-    {
-    	URL source = null;
-		try {
-			source = new URL("http://ichart.finance.yahoo.com/table.csv?s=AAPL&ignore=.csv");
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	File tmpFile = new File("src/mastero/opto/view/tmpData.csv");
-    	try {
-			FileUtils.copyURLToFile(source, tmpFile);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-
-    public static String getJASON(String url)
-    {
-    	URLConnection connection = null;
-    	URL source = null;
-    	String JSONstring = null;
-
-    	try{
-    		source = new URL(url);
-    	} catch(MalformedURLException e){
-    		e.printStackTrace();
-    	}
-
-		try {
-			connection = source.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-			JSONstring = in.readLine();
-			// Not necessary because it is returning just one line.
-			/*
-			String inputLine;
-	        while ((inputLine = in.readLine()) != null)
-	        {
-	            System.out.println(inputLine);
-	        }
-	        */
-			//System.out.println("json is: ");
-			//System.out.println(JSONstring);
-			//System.out.println("after jason");
-	        in.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return JSONstring;
-
-    }
 
     /**
      * Returns the main stage.

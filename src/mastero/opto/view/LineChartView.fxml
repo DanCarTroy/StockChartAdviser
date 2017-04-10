@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
    <bottom>
       <Button mnemonicParsing="false" onAction="#showMainFrame" text="Home" BorderPane.alignment="CENTER" />
    </bottom>
@@ -23,18 +23,48 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <MenuButton layoutY="177.0" mnemonicParsing="false" text="Historical Data">
+                  <MenuButton layoutX="1.0" layoutY="294.0" mnemonicParsing="false" text="Historical Data">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#oneYearDatabtn" text="1 year" />
                       <MenuItem mnemonicParsing="false" onAction="#twoYearDatabtn" text="2 years" />
                         <MenuItem mnemonicParsing="false" onAction="#fiveYearDatabtn" text="5 years" />
                     </items>
                   </MenuButton>
-                  <Button layoutY="64.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
-                  <CheckBox fx:id="sma_20" layoutY="306.0" mnemonicParsing="false" onAction="#handle20Checkboxes" text="SMA20" />
-                  <CheckBox fx:id="sma_50" layoutY="373.0" mnemonicParsing="false" onAction="#handle50Checkboxes" text="SMA50" />
-                  <CheckBox fx:id="sma_100" layoutX="-2.0" layoutY="429.0" mnemonicParsing="false" onAction="#handle100Checkboxes" text="SMA100" />
-                  <CheckBox fx:id="sma_200" layoutX="-2.0" layoutY="485.0" mnemonicParsing="false" onAction="#handle200Checkboxes" text="SMA200" />
+                  <Button layoutX="1.0" layoutY="240.0" mnemonicParsing="false" onAction="#allDatabtn" prefHeight="31.0" prefWidth="135.0" text="Show all Data" />
+                  <CheckBox fx:id="sma_20" layoutX="1.0" layoutY="356.0" mnemonicParsing="false" onAction="#handle20Checkboxes" text="SMA20" />
+                  <CheckBox fx:id="sma_50" layoutX="1.0" layoutY="402.0" mnemonicParsing="false" onAction="#handle50Checkboxes" text="SMA50" />
+                  <CheckBox fx:id="sma_100" layoutX="1.0" layoutY="447.0" mnemonicParsing="false" onAction="#handle100Checkboxes" text="SMA100" />
+                  <CheckBox fx:id="sma_200" layoutX="1.0" layoutY="491.0" mnemonicParsing="false" onAction="#handle200Checkboxes" text="SMA200" />
+                  <TitledPane animated="false" expanded="false" layoutX="1.0" layoutY="83.0" maxHeight="134.0" prefWidth="194.0" text="My Favorites ">
+                    <content>
+                        <TableView fx:id="stockTable" maxHeight="200.0" maxWidth="232.0" prefHeight="200.0" prefWidth="232.0">
+                          <columns>
+                            <TableColumn fx:id="stockSymbolColumn" prefWidth="78.0" text="Symbol" />
+                            <TableColumn fx:id="stockNameColumn" prefWidth="97.0" text="Name" />
+                          </columns>
+                        </TableView>
+                    </content>
+                  </TitledPane>
+                  <TitledPane animated="false" expanded="false" layoutX="1.0" layoutY="48.0" maxHeight="134.0" prefWidth="194.0" text="Dow 30">
+                     <content>
+                        <TableView fx:id="dow30Table" maxHeight="200.0" maxWidth="232.0" prefHeight="200.0" prefWidth="232.0">
+                           <columns>
+                              <TableColumn fx:id="d30SymbolColumn" prefWidth="78.0" text="Symbol" />
+                              <TableColumn fx:id="d30NameColumn" prefWidth="97.0" text="Name" />
+                           </columns>
+                        </TableView>
+                     </content>
+                  </TitledPane>
+                  <TitledPane animated="false" expanded="false" layoutX="1.0" layoutY="14.0" maxHeight="134.0" prefWidth="194.0" text="Most Active">
+                     <content>
+                        <TableView fx:id="mostActiveTable" maxHeight="200.0" maxWidth="232.0" prefHeight="200.0" prefWidth="232.0">
+                           <columns>
+                              <TableColumn fx:id="activeSymbolColumn" prefWidth="78.0" text="Symbol" />
+                              <TableColumn fx:id="activeNameColumn" prefWidth="97.0" text="Name" />
+                           </columns>
+                        </TableView>
+                     </content>
+                  </TitledPane>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
