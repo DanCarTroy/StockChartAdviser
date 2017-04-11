@@ -10,15 +10,44 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mastero.opto.MainApp;
+import mastero.opto.model.Stock;
+import mastero.opto.util.StockDownloader;
+
 import java.io.IOException;
 
 /**
  * Created by LucienChu on 2017-02-25.
  */
 public class LineChartController {
+
+	@FXML
+    private TableView<Stock> stockTable;
+    @FXML
+    private TableColumn<Stock, String> stockSymbolColumn;
+    @FXML
+    private TableColumn<Stock, String> stockNameColumn;
+
+    @FXML
+    private TableView<Stock> mostActiveTable;
+    @FXML
+    private TableColumn<Stock, String> activeSymbolColumn;
+    @FXML
+    private TableColumn<Stock, String> activeNameColumn;
+
+    @FXML
+    private TableView<Stock> dow30Table;
+    @FXML
+    private TableColumn<Stock, String> d30SymbolColumn;
+    @FXML
+    private TableColumn<Stock, String> d30NameColumn;
+
+    private Stock currentStock;
+
     MainApp main = new MainApp();
     private static final int ONE_YEAR = 365;
     private static final int TWO_YEAR = 730;
@@ -39,6 +68,74 @@ public class LineChartController {
     @FXML CheckBox sma_200;
     @FXML Button cutDataBtn;
     @FXML LineChart<String, Number>  lineChart;
+
+    /**
+     * The constructor.
+     * The constructor is called before the initialize() method.
+     */
+    public LineChartController() {
+    }
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    private void initialize() {
+
+    	try{
+        // Initialize the favorite stock table with the two columns.
+    	stockSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	stockNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
+        stockTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+     // Initialize the Dow30 stock table with the two columns.
+    	d30SymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	d30NameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
+        dow30Table.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+     // Initialize the Most Active stock table with the two columns.
+    	activeSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	activeNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
+        mostActiveTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+    	}
+    	catch(NullPointerException e)
+    	{
+    		System.out.println("NASDAQ, CNN, or Yahoo did not cooperate :(");
+    	}
+    }
+
+    public void setCurrentStock(Stock stk){
+    	currentStock = stk;
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     *
+     * @param mainApp
+     */
+    public void setMainApp(MainApp mainApp) {
+        main = mainApp;
+
+        // Add observable list data to the table
+        stockTable.setItems(mainApp.getStockList());
+        dow30Table.setItems(mainApp.getDow30List());
+        mostActiveTable.setItems(mainApp.getMostActiveList());
+    }
+
     @FXML
     private void showMainFrame() throws IOException{
         main.showMainWindow();
@@ -47,8 +144,8 @@ public class LineChartController {
     public void allDatabtn()throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        data = main.getChartData();
-        if (main.getChartData().getData().size() == 0)
+        data = StockDownloader.getChartData(currentStock.getStockSymbol());
+        if (StockDownloader.getChartData(currentStock.getStockSymbol()).getData().size() == 0)
             showErroPopUp();
         else {
             data.setName("All data");
@@ -63,7 +160,7 @@ public class LineChartController {
     public void oneYearDatabtn() throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        data = main.getChartData(ONE_YEAR);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -79,7 +176,7 @@ public class LineChartController {
     public void twoYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        data = main.getChartData(TWO_YEAR);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), TWO_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -95,7 +192,7 @@ public class LineChartController {
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        data = main.getChartData(FIVE_YEAR);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), FIVE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
@@ -181,7 +278,7 @@ public class LineChartController {
     public void oneYearNiceChartbtn() throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
-        data = main.getChartData(ONE_YEAR);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
