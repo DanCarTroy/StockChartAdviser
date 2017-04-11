@@ -88,8 +88,8 @@ public class MainApp extends Application {
 		ArrayList<String> stockSymbols = new ArrayList<String>();
 
 		// YQL (Yahoo Query Language) url --> preparing the url --> Getting the name.
-		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fb%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fh3%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20title%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fhotstocks%2F'%20and%20xpath%3D'%2F%2Ftable%5B%40class%3D%22wsod_dataTable%20wsod_dataTableBigAlt%22%5D%2F%2Ftd%2Fspan'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fhotstocks%2F'%20and%20xpath%3D'%2F%2Ftable%5B%40class%3D%22wsod_dataTable%20wsod_dataTableBigAlt%22%5D%2F%2Ftd%2Fa'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
 		String JSONstring = StockDownloader.getJASON(nameYqlUrl);
 		System.out.println("get most active jason = "+JSONstring);
@@ -101,18 +101,18 @@ public class MainApp extends Application {
 		try{
 
 			JSONObject j = new JSONObject(JSONstring);
-	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("span");
 
 	        JSONObject j2 = new JSONObject(JSONsymbol);
 	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
 
 
-	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
+
 	        for(int i=0; i < arr.length(); i++)
 	        {
+	        	JSONObject obj = arr.getJSONObject(i);
+	            String name = obj.getString("title");
 
-	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
-	            String name = arr.getString(i);
 	            String symbol = arr2.getString(i);
 
 	            System.out.println(name);
@@ -123,7 +123,7 @@ public class MainApp extends Application {
 
 	            mostActiveList.add(new Stock(symbol, name));
 
-	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
+
 
 	        }
 		}
@@ -160,11 +160,10 @@ public class MainApp extends Application {
 	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
 
 
-	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
+	        //
 	        for(int i=0; i < arr2.length(); i++)
 	        {
 
-	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
 	            String name = arr.getString(i);
 	            String symbol = arr2.getString(i);
 
@@ -176,7 +175,7 @@ public class MainApp extends Application {
 
 	            dow30List.add(new Stock(symbol, name));
 
-	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
+
 
 	        }
 		}
