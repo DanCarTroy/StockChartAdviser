@@ -322,6 +322,14 @@ public class LineChartController {
                 lineChart.getData().add(sma20);
             }
             lineChart.getData().add(data);
+
+//            DataAnalysis analysis = new DataAnalysis(data);
+//            XYChart.Series<String, Number> buySignal = analysis.getBuySignals();
+//            XYChart.Series<String, Number> sellSignal = analysis.getSellSignals();
+//            lineChart.getData().add(buySignal);
+//            lineChart.getData().add(sellSignal);
+
+
         }
     }
 
