@@ -14,8 +14,9 @@
 
 <AnchorPane maxHeight="600.0" maxWidth="800.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="899.0" prefWidth="1054.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
    <children>
-      <Button layoutX="12.0" layoutY="250.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
-      <MenuButton layoutX="14.0" layoutY="317.0" mnemonicParsing="false" text="Historical Data">
+      <Button layoutX="11.0" layoutY="823.0" mnemonicParsing="false" onAction="#showMainFrame" text="Home" />
+      <Button layoutX="13.0" layoutY="376.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
+      <MenuButton layoutX="12.0" layoutY="318.0" mnemonicParsing="false" text="Historical Data">
          <items>
             <MenuItem mnemonicParsing="false" onAction="#oneYearDatabtn" text="1 year" />
             <MenuItem mnemonicParsing="false" onAction="#twoYearDatabtn" text="2 years" />
@@ -35,33 +36,32 @@
             <NumberAxis side="LEFT" />
          </yAxis>
       </LineChart>
-      <Button layoutX="11.0" layoutY="823.0" mnemonicParsing="false" onAction="#showMainFrame" text="Home" />
-      <TitledPane animated="false" expanded="false" layoutX="5.0" layoutY="136.0" maxHeight="134.0" prefWidth="177.0" text="My Favorites ">
+      <TitledPane animated="false" expanded="false" layoutX="2.0" layoutY="130.0" prefWidth="167.0" text="My Favorites ">
          <content>
-            <TableView fx:id="stockTable" maxHeight="200.0" maxWidth="232.0" prefHeight="200.0" prefWidth="232.0">
+            <TableView fx:id="stockTable" maxHeight="136.0" maxWidth="232.0" prefHeight="136.0" prefWidth="232.0">
                <columns>
-                  <TableColumn fx:id="stockSymbolColumn" prefWidth="78.0" text="Symbol" />
-                  <TableColumn fx:id="stockNameColumn" prefWidth="97.0" text="Name" />
+                  <TableColumn fx:id="stockSymbolColumn" prefWidth="65.0" text="Symbol" />
+                  <TableColumn fx:id="stockNameColumn" prefWidth="100.0" text="Name" />
                </columns>
             </TableView>
          </content>
       </TitledPane>
-      <TitledPane animated="false" expanded="false" layoutX="6.0" layoutY="87.0" maxHeight="134.0" prefWidth="177.0" text="Dow 30">
+      <TitledPane animated="false" expanded="false" layoutX="2.0" layoutY="79.0" prefWidth="167.0" text="Dow 30">
          <content>
-            <TableView fx:id="dow30Table" maxHeight="200.0" maxWidth="232.0" prefHeight="200.0" prefWidth="232.0">
+            <TableView fx:id="dow30Table" maxHeight="136.0" prefHeight="136.0" prefWidth="165.0">
                <columns>
-                  <TableColumn fx:id="d30SymbolColumn" prefWidth="78.0" text="Symbol" />
-                  <TableColumn fx:id="d30NameColumn" prefWidth="97.0" text="Name" />
+                  <TableColumn fx:id="d30SymbolColumn" prefWidth="64.0" text="Symbol" />
+                  <TableColumn fx:id="d30NameColumn" prefWidth="101.0" text="Name" />
                </columns>
             </TableView>
          </content>
       </TitledPane>
-      <TitledPane animated="false" expanded="false" layoutX="5.0" layoutY="42.0" maxHeight="134.0" prefWidth="177.0" text="Most Active">
+      <TitledPane animated="false" expanded="false" layoutX="2.0" layoutY="34.0" prefWidth="167.0" text="Most Active">
          <content>
-            <TableView fx:id="mostActiveTable" maxHeight="200.0" maxWidth="232.0" prefWidth="232.0">
+            <TableView fx:id="mostActiveTable" maxHeight="136.0" prefHeight="136.0">
                <columns>
-                  <TableColumn fx:id="activeSymbolColumn" prefWidth="78.0" text="Symbol" />
-                  <TableColumn fx:id="activeNameColumn" prefWidth="97.0" text="Name" />
+                  <TableColumn fx:id="activeSymbolColumn" prefWidth="60.0" text="Symbol" />
+                  <TableColumn fx:id="activeNameColumn" prefWidth="105.0" text="Name" />
                </columns>
             </TableView>
          </content>

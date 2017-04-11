@@ -91,10 +91,10 @@ public class MainApp extends Application {
 		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fb%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fh3%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
-		String JSONstring = Stock.getJASON(nameYqlUrl);
+		String JSONstring = StockDownloader.getJASON(nameYqlUrl);
 		System.out.println("get most active jason = "+JSONstring);
 
-		String JSONsymbol = Stock.getJASON(symbolYqlUrl);
+		String JSONsymbol = StockDownloader.getJASON(symbolYqlUrl);
 		System.out.println("get most active jason = "+JSONsymbol);
 
 		JSONArray arr, arr2 = null;
@@ -141,20 +141,20 @@ public class MainApp extends Application {
 		ArrayList<String> stockSymbols = new ArrayList<String>();
 
 		// YQL (Yahoo Query Language) url --> preparing the url --> Getting the name.
-		//String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fb%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fdow30%2F'%20and%20xpath%3D'*%2F%2Ftd%5B%40class%3D%22wsod_firstCol%22%5D%2Fspan'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fdow30%2F'%20and%20xpath%3D'%2F%2Ftable%2F*%5Bcontains(.%2C%22Company%22)%5D%2F%2Fa'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
-		//String JSONstring = Stock.getJASON(nameYqlUrl);
-		//System.out.println("get most active jason = "+JSONstring);
+		String JSONstring = StockDownloader.getJASON(nameYqlUrl);
+		System.out.println("get most dow30 jason(names) = "+JSONstring);
 
-		String JSONsymbol = Stock.getJASON(symbolYqlUrl);
-		System.out.println("get dow30 jason = "+JSONsymbol);
+		String JSONsymbol = StockDownloader.getJASON(symbolYqlUrl);
+		System.out.println("get dow30 jason(symbols) = "+JSONsymbol);
 
 		JSONArray arr, arr2 = null;
 		try{
 
-			//JSONObject j = new JSONObject(JSONstring);
-	        //arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+			JSONObject j = new JSONObject(JSONstring);
+	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("span");
 
 	        JSONObject j2 = new JSONObject(JSONsymbol);
 	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
@@ -165,16 +165,16 @@ public class MainApp extends Application {
 	        {
 
 	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
-	            //String name = arr.getString(i);
+	            String name = arr.getString(i);
 	            String symbol = arr2.getString(i);
 
-	           // System.out.println(name);
-	            //stockNames.add(name);
+	            System.out.println(name);
+	            stockNames.add(name);
 
 	            System.out.println(symbol);
 	            stockSymbols.add(symbol);
 
-	            dow30List.add(new Stock(symbol, "cool"));
+	            dow30List.add(new Stock(symbol, name));
 
 	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
 
