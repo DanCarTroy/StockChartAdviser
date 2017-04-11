@@ -20,12 +20,18 @@ public class DataAnalysis {
 
     public DataAnalysis(XYChart.Series data){
         int size = data.getData().size();
+        XYChart.Series<String, Number> temp0 = new XYChart.Series<>();
         for(int i = 0; i < size; i++){
             XYChart.Data aData = (XYChart.Data)data.getData().get(i);
-            dateStrings.add((String) aData.getXValue());
-            price.add((Number) aData.getYValue());
-            this.data.getData().add(new XYChart.Data(aData.getXValue(), aData.getYValue()));
+            String string = (String) aData.getXValue();
+            dateStrings.add(string);
+            Number number = (Number) aData.getYValue();
+            price.add(number);
+
+            XYChart.Data temp1 = new XYChart.Data(string, number);
+            temp0.getData().add(temp1);
         }
+        this.data = temp0;
         analysizeAllSMAs();
     }
 
@@ -35,7 +41,7 @@ public class DataAnalysis {
         int initialPosition = walk;
         for (int i = 0; i < price.size() - walk ; i++) {
             int j = i + walk - 1;
-            float smaPrice = sum(i, j) / walk;
+            double smaPrice = sum(i, j) / walk;
             temp1.add(smaPrice);
             temp0.add(dateStrings.get(initialPosition));
             initialPosition++;
@@ -45,8 +51,8 @@ public class DataAnalysis {
             temp.getData().add(new XYChart.Data<String, Number>(temp0.get(i), temp1.get(i)));
         return temp;
     }
-    public float sum(int start, int end) {
-        float total = 0;
+    public double sum(int start, int end) {
+        double total = 0;
         for (int i = start; i < end + 1; i++) {
             double singleClosePrice = (double) price.get(i);
             total += singleClosePrice;
@@ -110,29 +116,29 @@ public class DataAnalysis {
             this.singleSMAAnalysis(sma200);
     }
     public boolean cross(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        float precision = (float) 0.01;
-        float preDiff = (float) c0.getYValue() - (float)p0.getYValue();
-        float curDiff = (float) c1.getYValue() - (float) p1.getYValue();
-        float product = preDiff*curDiff;
+        double precision = (double) 0.01;
+        double preDiff = (double) c0.getYValue() - (double)p0.getYValue();
+        double curDiff = (double) c1.getYValue() - (double) p1.getYValue();
+        double product = preDiff*curDiff;
         return (product < 0 || product < precision);
     }
     public boolean crossAbove(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        float diff = (float) p1.getYValue() - (float) c1.getYValue();
+        double diff = (double) p1.getYValue() - (double) c1.getYValue();
         return this.cross(p0,p1,c0,c1) && diff > 0;
     }
 
     public boolean crossBelow(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        float diff = (float) p1.getYValue() - (float) c1.getYValue();
+        double diff = (double) p1.getYValue() - (double) c1.getYValue();
         return this.cross(p0,p1,c0,c1) && diff < 0;
     }
 
     public boolean rising(XYChart.Data  prevData, XYChart.Data  postData){
-        float diff = (float) postData.getYValue() - (float) prevData.getYValue();
+        double diff = (double) postData.getYValue() - (double) prevData.getYValue();
         return (diff > 0);
     }
 
     public boolean descending(XYChart.Data prevData, XYChart.Data postData){
-        float diff = (float) postData.getYValue() - (float) prevData.getYValue();
+        double diff = (double) postData.getYValue() - (double) prevData.getYValue();
         return (diff < 0);
     }
 
