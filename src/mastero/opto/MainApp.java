@@ -25,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mastero.opto.model.Stock;
 import mastero.opto.model.User;
+import mastero.opto.util.StockDownloader;
 import mastero.opto.view.CreateUserDialogController;
 import mastero.opto.view.LineChartController;
 import mastero.opto.view.LoginController;
@@ -43,8 +44,8 @@ public class MainApp extends Application {
 	private StackPane loginForm;
 	private static BorderPane mainLayout = new BorderPane();
 
-	public static User currentUser;
 
+	public static User currentUser;
 
 	/**
      * The data as an observable list of Stocks.
@@ -79,8 +80,6 @@ public class MainApp extends Application {
 		{
 			System.out.println("Could not get most active data. NASDAQ servers are busy :(");
 		}
-
-
 	}
 
 	private void getMostActive() throws org.json.JSONException {
@@ -205,6 +204,7 @@ public class MainApp extends Application {
         return mostActiveList;
     }
 
+
 	@Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -304,16 +304,18 @@ public class MainApp extends Application {
 
 	}
 
+
     public void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
-		BorderPane chartView = loader.load();
+		AnchorPane chartView = loader.load();
 		mainLayout.setCenter(chartView);
 
 		// Give the controller access to the main app.
         LineChartController controller = loader.getController();
         controller.setMainApp(this);
 	}
+
 
     /**
      * Returns the main stage.
