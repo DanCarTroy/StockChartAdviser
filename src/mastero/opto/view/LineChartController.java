@@ -1,6 +1,11 @@
 package mastero.opto.view;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,10 +16,13 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import mastero.opto.MainApp;
+import mastero.opto.model.Signal;
 import mastero.opto.model.Stock;
 import mastero.opto.util.StockDownloader;
 
@@ -45,6 +53,15 @@ public class LineChartController {
     private TableColumn<Stock, String> d30SymbolColumn;
     @FXML
     private TableColumn<Stock, String> d30NameColumn;
+
+    @FXML
+    private TableView<Signal> signalTable;
+    @FXML
+    private TableColumn<Signal, String> sigDateColumn;
+    @FXML
+    private TableColumn<Signal, String> sigActionColumn;
+
+    private ObservableList<Signal> signalList = FXCollections.observableArrayList();
 
     private Stock currentStock;
 
@@ -112,6 +129,10 @@ public class LineChartController {
     	// Listen for selection changes and pass the selected stock so that it can be used in the program.
         mostActiveTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+     // Initialize the Signal table with the two columns.
+    	sigDateColumn.setCellValueFactory(cellData -> cellData.getValue().signalDateProperty());
+    	sigActionColumn.setCellValueFactory(cellData -> cellData.getValue().signalNameProperty());
 
     	}
     	catch(NullPointerException e)
@@ -271,6 +292,8 @@ public class LineChartController {
 
     public void oneYearNiceChartbtn() throws IOException{
         lineChart.getData().clear();
+        signalTable.getItems().clear();
+
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -314,18 +337,41 @@ public class LineChartController {
             DataAnalysis analysis = new DataAnalysis(data);
             XYChart.Series<String, Number> buySignal = analysis.getBuySignals();
             buySignal.setName("buy signal");
+
+
             XYChart.Series<String, Number> sellSignal = analysis.getSellSignals();
             sellSignal.setName("sell signal");
             lineChart.getData().add(buySignal);
 
-//            if(buySignal != null && buySignal.getData().size() != 0){
-//                for(int i = 0; i < buySignal.getData().size(); i++){
-//                    String string = buySignal.getData().get(i).getXValue();
-//                    String action = "buy";
-//                    //put string and action on a table please
-//                }
-//            }
+            if(buySignal != null && buySignal.getData().size() != 0){
+                for(int i = 0; i < buySignal.getData().size(); i++){
+
+                    String string = buySignal.getData().get(i).getXValue();
+                    String action = "buy";
+
+                    System.out.println("buy signal "+i+": "+string);
+                    //put string and action on a table please
+                    signalList.add(new Signal(string,action));
+                }
+            }
             //do exactly the same thing for sell Signal.
+            if(sellSignal != null && sellSignal.getData().size() != 0){
+                for(int i = 0; i < sellSignal.getData().size(); i++){
+
+                    String string = sellSignal.getData().get(i).getXValue();
+                    String action = "sell";
+
+                    System.out.println("sell signal "+i+": "+string);
+                    //put string and action on a table please
+                    signalList.add(new Signal(string,action));
+
+                }
+            }
+
+         // Populate the Signal table with the list.
+            signalTable.setItems(signalList);
+        	//sigDateColumn.setCellValueFactory(cellData -> cellData.getValue().signalDateProperty());
+        	//sigActionColumn.setCellValueFactory(cellData -> cellData.getValue().signalNameProperty());
         }
     }
 
