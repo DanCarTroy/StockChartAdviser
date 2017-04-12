@@ -53,6 +53,7 @@ public class MainApp extends Application {
 	private StackPane loginForm;
 	private AnchorPane chartView;
 	private static BorderPane mainLayout = new BorderPane();
+	private LineChartController currentChartInstance;
 
 
 	public static User currentUser;
@@ -292,8 +293,8 @@ public class MainApp extends Application {
     public void showMainFrame()throws IOException{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/MainFrame.fxml"));
-		mainLayout = (BorderPane) loader.load();
-		Scene scene = new Scene(mainLayout);
+		setMainLayout((BorderPane) loader.load());
+		Scene scene = new Scene(getMainLayout());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
@@ -310,7 +311,7 @@ public class MainApp extends Application {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/MainWindow.fxml"));
 		//mainLayout = loader.load();
-		mainLayout.setCenter(loader.load());
+		getMainLayout().setCenter(loader.load());
 
 
 		// Show the scene containing the root layout.
@@ -327,14 +328,22 @@ public class MainApp extends Application {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
 		chartView = loader.load();
-		mainLayout.setCenter(chartView);
+		getMainLayout().setCenter(chartView);
 
 		// Give the controller access to the main app.
         LineChartController controller = loader.getController();
         controller.setMainApp(this);
 
+        currentChartInstance = controller;
+
 
 	}
+
+    public void saveScreenshot(File file)
+    {
+    	currentChartInstance.saveScreenshotToFile(file);
+    }
+
 
     /**
      * Returns the file that was last opened.
@@ -354,62 +363,6 @@ public class MainApp extends Application {
 
     }
 
-    /**
-     * Saves a screenshot of current chart to the specified file.
-     *
-     * @param file
-     */
-    public void saveScreenshotToFile(File file) {
-        try {
-
-        	Scene scene = new Scene(chartView, 800, 600);
-        	saveAsPng(scene, file.getPath());
-            //stage.setScene(scene);
-            //saveAsPng(scene, "c:\\temp\\chart1.png");
-
-            // Save the file path to the registry.
-            setUserFilePath(file);
-        } catch (Exception e) { // catches ANY exception
-        	e.printStackTrace();
-        	Alert alert = new Alert(AlertType.ERROR);
-        	alert.setTitle("Error");
-        	alert.setHeaderText("Could not save data");
-        	alert.setContentText("Could not save data to file:\n" + file.getPath());
-
-        	alert.showAndWait();
-        }
-    }
-
-    public void saveAsPng(Scene scene, String path) {
-    	WritableImage image = scene.snapshot(null);
-        File file = new File(path);
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Sets the file path of the currently loaded file. The path is persisted in
-     * the OS specific registry.
-     *
-     * @param file the file or null to remove the path
-     */
-    public void setUserFilePath(File file) {
-        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-        if (file != null) {
-            prefs.put("filePath", file.getPath());
-
-            // Update the stage title.
-            primaryStage.setTitle("StockChartAdviser - " + file.getName());
-        } else {
-            prefs.remove("filePath");
-
-            // Update the stage title.
-            primaryStage.setTitle("StockChartAdviser");
-        }
-    }
 
     /**
      * Returns the main stage.
@@ -421,5 +374,13 @@ public class MainApp extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+	public static BorderPane getMainLayout() {
+		return mainLayout;
+	}
+
+	public static void setMainLayout(BorderPane mainLayout) {
+		MainApp.mainLayout = mainLayout;
 	}
 }

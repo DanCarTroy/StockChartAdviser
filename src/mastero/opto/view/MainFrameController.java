@@ -65,7 +65,7 @@ public class MainFrameController {
     private void handleSave() {
         File file = mainApp.getLastOpenedFile();
         if (file != null) {
-            mainApp.saveScreenshotToFile(file);
+            mainApp.saveScreenshot(file);
         } else {
             handleSaveAs();
         }
@@ -91,7 +91,7 @@ public class MainFrameController {
             if (!file.getPath().endsWith(".png")) {
                 file = new File(file.getPath() + ".png");
             }
-            mainApp.saveScreenshotToFile(file);
+            mainApp.saveScreenshot(file);
         }
     }
 

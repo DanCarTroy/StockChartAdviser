@@ -9,7 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -17,6 +20,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -80,6 +84,22 @@ public class LineChartController {
     @FXML CheckBox sma_200;
     @FXML Button cutDataBtn;
     @FXML LineChart<String, Number>  lineChart;
+
+    /*
+    private boolean allDataButtonFlag = false;
+    private boolean oYDButtonFlag = false;
+    private boolean tYDButtonFlag = false;
+    private boolean fYDButtonFlag = false;
+    //private boolean smaButtonFlag = false;
+    private boolean sma_20CBoxFlag = false;
+    private boolean sma_50CBoxFlag = false;
+    private boolean sma_100CBoxFlag = false;
+    private boolean sma_200CBoxFlag = false; */
+
+    private enum IndicatorToReload {none, all, one, two, five,
+    	sma20, sma50, sma100, sma200};
+
+    private IndicatorToReload  flagToReload = IndicatorToReload.none;
 
     /**
      * The constructor.
@@ -169,6 +189,8 @@ public class LineChartController {
             getSMA100();
             getSMA200();
         }
+
+        flagToReload = IndicatorToReload.all;
     }
 
     public void oneYearDatabtn() throws IOException{
@@ -185,6 +207,7 @@ public class LineChartController {
             getSMA100();
             getSMA200();
         }
+        flagToReload = IndicatorToReload.one;
     }
 
     public void twoYearDatabtn(ActionEvent event) throws IOException{
@@ -201,6 +224,8 @@ public class LineChartController {
             getSMA100();
             getSMA200();
         }
+
+        flagToReload = IndicatorToReload.two;
     }
 
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
@@ -217,6 +242,8 @@ public class LineChartController {
             getSMA100();
             getSMA200();
         }
+
+        flagToReload = IndicatorToReload.five;
     }
 
     public void showErroPopUp()throws IOException{
@@ -344,6 +371,106 @@ public class LineChartController {
             series.getData().remove(0, stop);
         }
         return series;
+    }
+
+    /**
+     * Saves a screenshot of current chart to the specified file.
+     *
+     * @param file
+     */
+    public void saveScreenshotToFile(File file) {
+        try {
+
+        	//defining the axes
+            final CategoryAxis x = new CategoryAxis();
+            final NumberAxis y = new NumberAxis();
+            x.setLabel("Date");
+            y.setLabel("Close Price");
+        	LineChart<String, Number>  lchart = new LineChart<String, Number>(x, y); //lineChart;
+        	lchart.setAnimated(false);
+
+        	lchart.getData().add(data);
+        	if(sma_20.isSelected() && sma20 != null)
+        		lchart.getData().add(sma20);
+        	if(sma_50.isSelected() && sma50 != null)
+        		lchart.getData().add(sma50);
+        	if(sma_100.isSelected() && sma100 != null)
+        		lchart.getData().add(sma100);
+        	if(sma_200.isSelected() && sma200 != null)
+        		lchart.getData().add(sma200);
+
+
+        	/*
+        	FXMLLoader loader = new FXMLLoader();
+    		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
+    		AnchorPane newchartView = loader.load();
+    		main.getMainLayout().setCenter(newchartView);
+			*/
+
+        	Scene scene = new Scene(lchart, 800, 600);
+        	saveAsPng(scene, file.getPath());
+            //stage.setScene(scene);
+            //saveAsPng(scene, "c:\\temp\\chart1.png");
+
+            // Save the file path to the registry.
+            setUserFilePath(file);
+
+            lineChart.getData().remove(sma20);
+            lineChart.getData().remove(sma50);
+
+
+            ActionEvent event = new ActionEvent();
+            switch(flagToReload)
+            {
+	            case all: System.out.println("Im all");allDatabtn(); break;
+	            case one: System.out.println("Im one");oneYearDatabtn(); break;
+	            case two: System.out.println("Im two");twoYearDatabtn(event); break;
+	            case five:System.out.println("Im five");fiveYearDatabtn(event); break;
+	            default: flagToReload = IndicatorToReload.none; main.showChartView(); break;
+            }
+
+
+            //main.showChartView();
+        } catch (Exception e) { // catches ANY exception
+        	e.printStackTrace();
+        	Alert alert = new Alert(AlertType.ERROR);
+        	alert.setTitle("Error");
+        	alert.setHeaderText("Could not save data");
+        	alert.setContentText("Could not save data to file:\n" + file.getPath());
+
+        	alert.showAndWait();
+        }
+    }
+
+    public void saveAsPng(Scene scene, String path) {
+    	WritableImage image = scene.snapshot(null);
+        File file = new File(path);
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the file path of the currently loaded file. The path is persisted in
+     * the OS specific registry.
+     *
+     * @param file the file or null to remove the path
+     */
+    public void setUserFilePath(File file) {
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        if (file != null) {
+            prefs.put("filePath", file.getPath());
+
+            // Update the stage title.
+            main.getPrimaryStage().setTitle("StockChartAdviser - " + file.getName());
+        } else {
+            prefs.remove("filePath");
+
+            // Update the stage title.
+            main.getPrimaryStage().setTitle("StockChartAdviser");
+        }
     }
 
 }
