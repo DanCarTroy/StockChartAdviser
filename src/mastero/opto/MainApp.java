@@ -16,10 +16,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.prefs.Preferences;
+
+import javax.imageio.ImageIO;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,8 +33,13 @@ import mastero.opto.util.StockDownloader;
 import mastero.opto.view.CreateUserDialogController;
 import mastero.opto.view.LineChartController;
 import mastero.opto.view.LoginController;
+import mastero.opto.view.MainFrameController;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -42,6 +51,7 @@ public class MainApp extends Application {
 
 	private Stage primaryStage;
 	private StackPane loginForm;
+	private AnchorPane chartView;
 	private static BorderPane mainLayout = new BorderPane();
 
 
@@ -209,6 +219,9 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("StockChartAdviser");
 
+     // Set the application icon.
+        this.primaryStage.getIcons().add(new Image("file:resources/images/aquicon_basecamp.png"));
+
         initLogin();
 
 
@@ -284,7 +297,13 @@ public class MainApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
+		// Give the controller access to this LineChartController.
+        MainFrameController controller2 = loader.getController();
+        controller2.setMainApp(this);
+
 		showChartView();
+
+
 	}
 
     public void showMainWindow() throws IOException{
@@ -307,14 +326,90 @@ public class MainApp extends Application {
     public void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
-		AnchorPane chartView = loader.load();
+		chartView = loader.load();
 		mainLayout.setCenter(chartView);
 
 		// Give the controller access to the main app.
         LineChartController controller = loader.getController();
         controller.setMainApp(this);
+
+
 	}
 
+    /**
+     * Returns the file that was last opened.
+     * This is read from the user's registry.
+     * Null will be returned if nothing is found.
+     *
+     * @return last opened file
+     */
+    public File getLastOpenedFile() {
+
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        String filePath = prefs.get("filePath", null);
+        if (filePath != null)
+        	return new File(filePath);
+        else
+            return null;
+
+    }
+
+    /**
+     * Saves a screenshot of current chart to the specified file.
+     *
+     * @param file
+     */
+    public void saveScreenshotToFile(File file) {
+        try {
+
+        	Scene scene = new Scene(chartView, 800, 600);
+        	saveAsPng(scene, file.getPath());
+            //stage.setScene(scene);
+            //saveAsPng(scene, "c:\\temp\\chart1.png");
+
+            // Save the file path to the registry.
+            setUserFilePath(file);
+        } catch (Exception e) { // catches ANY exception
+        	e.printStackTrace();
+        	Alert alert = new Alert(AlertType.ERROR);
+        	alert.setTitle("Error");
+        	alert.setHeaderText("Could not save data");
+        	alert.setContentText("Could not save data to file:\n" + file.getPath());
+
+        	alert.showAndWait();
+        }
+    }
+
+    public void saveAsPng(Scene scene, String path) {
+    	WritableImage image = scene.snapshot(null);
+        File file = new File(path);
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the file path of the currently loaded file. The path is persisted in
+     * the OS specific registry.
+     *
+     * @param file the file or null to remove the path
+     */
+    public void setUserFilePath(File file) {
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        if (file != null) {
+            prefs.put("filePath", file.getPath());
+
+            // Update the stage title.
+            primaryStage.setTitle("StockChartAdviser - " + file.getName());
+        } else {
+            prefs.remove("filePath");
+
+            // Update the stage title.
+            primaryStage.setTitle("StockChartAdviser");
+        }
+    }
 
     /**
      * Returns the main stage.

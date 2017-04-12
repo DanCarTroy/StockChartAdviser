@@ -1,6 +1,9 @@
 package mastero.opto.view;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
+
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,17 +11,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mastero.opto.MainApp;
 import mastero.opto.model.Stock;
 import mastero.opto.util.StockDownloader;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
+
+import javax.imageio.ImageIO;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 /**
  * Created by LucienChu on 2017-02-25.
@@ -82,6 +94,8 @@ public class LineChartController {
      */
     @FXML
     private void initialize() {
+
+
 
     	try{
         // Initialize the favorite stock table with the two columns.
@@ -331,4 +345,5 @@ public class LineChartController {
         }
         return series;
     }
+
 }
