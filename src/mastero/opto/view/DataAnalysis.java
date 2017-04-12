@@ -92,9 +92,8 @@ public class DataAnalysis {
                     buySignals.getData().add(temp);
                 }
 
-                if (crossBelow(p0,p1,c0,c1)) {
+                else if (crossBelow(p0,p1,c0,c1)) {
                     XYChart.Data<String, Number> temp = new XYChart.Data<String, Number>((String)c1.getXValue(),150);
-                    buySignals.getData().add(temp);
                     sellSignals.getData().add(temp);
                 }
             }
@@ -116,7 +115,7 @@ public class DataAnalysis {
             this.singleSMAAnalysis(sma200);
     }
     public boolean cross(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        double precision = (double) 0.01;
+        double precision = (double) 0.00000000000000001;
         double preDiff = (double) c0.getYValue() - (double)p0.getYValue();
         double curDiff = (double) c1.getYValue() - (double) p1.getYValue();
         double product = preDiff*curDiff;

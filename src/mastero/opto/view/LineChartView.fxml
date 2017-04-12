@@ -5,6 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
@@ -12,23 +13,23 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="600.0" maxWidth="800.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="899.0" prefWidth="1054.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
+<AnchorPane maxHeight="600.0" maxWidth="800.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="899.0" prefWidth="1054.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mastero.opto.view.LineChartController">
    <children>
-      <Button layoutX="11.0" layoutY="823.0" mnemonicParsing="false" onAction="#showMainFrame" text="Home" />
-      <Button layoutX="13.0" layoutY="376.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
-      <MenuButton layoutX="12.0" layoutY="318.0" mnemonicParsing="false" text="Historical Data">
+      <Button layoutX="18.0" layoutY="739.0" mnemonicParsing="false" onAction="#showMainFrame" text="Home" />
+      <Button layoutX="9.0" layoutY="301.0" mnemonicParsing="false" onAction="#allDatabtn" text="Show all Data" />
+      <MenuButton layoutX="11.0" layoutY="231.0" mnemonicParsing="false" text="Historical Data">
          <items>
             <MenuItem mnemonicParsing="false" onAction="#oneYearDatabtn" text="1 year" />
             <MenuItem mnemonicParsing="false" onAction="#twoYearDatabtn" text="2 years" />
             <MenuItem mnemonicParsing="false" onAction="#fiveYearDatabtn" text="5 years" />
          </items>
       </MenuButton>
-      <CheckBox fx:id="sma_200" layoutX="19.0" layoutY="585.0" mnemonicParsing="false" onAction="#handle200Checkboxes" text="SMA200" />
-      <CheckBox fx:id="sma_100" layoutX="18.0" layoutY="538.0" mnemonicParsing="false" onAction="#handle100Checkboxes" text="SMA100" />
-      <CheckBox fx:id="sma_50" layoutX="19.0" layoutY="491.0" mnemonicParsing="false" onAction="#handle50Checkboxes" text="SMA50" />
-      <CheckBox fx:id="sma_20" layoutX="20.0" layoutY="441.0" mnemonicParsing="false" onAction="#handle20Checkboxes" text="SMA20" />
-      <Button fx:id="cutDataBtn" layoutX="14.0" layoutY="644.0" mnemonicParsing="false" onAction="#oneYearNiceChartbtn" text="smas and data" />
-      <LineChart fx:id="lineChart" layoutX="174.0" layoutY="12.0" prefHeight="703.0" prefWidth="883.0" stylesheets="@lineChart.css" AnchorPane.bottomAnchor="184.0" AnchorPane.leftAnchor="174.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="12.0">
+      <CheckBox fx:id="sma_200" layoutX="19.0" layoutY="526.0" mnemonicParsing="false" onAction="#handle200Checkboxes" text="SMA200" />
+      <CheckBox fx:id="sma_100" layoutX="18.0" layoutY="479.0" mnemonicParsing="false" onAction="#handle100Checkboxes" text="SMA100" />
+      <CheckBox fx:id="sma_50" layoutX="19.0" layoutY="432.0" mnemonicParsing="false" onAction="#handle50Checkboxes" text="SMA50" />
+      <CheckBox fx:id="sma_20" layoutX="20.0" layoutY="382.0" mnemonicParsing="false" onAction="#handle20Checkboxes" text="SMA20" />
+      <Button fx:id="cutDataBtn" layoutX="14.0" layoutY="585.0" mnemonicParsing="false" onAction="#oneYearNiceChartbtn" text="smas and data" />
+      <LineChart fx:id="lineChart" layoutX="174.0" layoutY="12.0" prefHeight="703.0" prefWidth="883.0" stylesheets="@styleSheet.css" AnchorPane.bottomAnchor="184.0" AnchorPane.leftAnchor="174.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="12.0">
          <xAxis>
             <CategoryAxis side="BOTTOM" />
          </xAxis>
@@ -66,5 +67,6 @@
             </TableView>
          </content>
       </TitledPane>
+      <Label layoutX="14.0" layoutY="691.0" text="Click buy/sell signal for detail" />
    </children>
 </AnchorPane>
