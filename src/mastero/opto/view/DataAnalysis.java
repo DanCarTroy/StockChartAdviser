@@ -173,6 +173,6 @@ public class DataAnalysis {
     }
 
     public XYChart.Series<String, Number> getSMA200(){
-        return copy(this.SMA100());
+        return copy(this.SMA200());
     }
 }
