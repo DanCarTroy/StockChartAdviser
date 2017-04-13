@@ -154,6 +154,18 @@ public class LineChartController {
 
     public void setCurrentStock(Stock stk){
     	currentStock = stk;
+
+    	try {
+			oneYearAction();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    	handle20Checkboxes();
+        handle50Checkboxes();
+        handle100Checkboxes();
+        handle200Checkboxes();
     }
 
     /**
@@ -207,6 +219,28 @@ public class LineChartController {
             getSMA100();
             getSMA200();
         }
+
+        if(true/*flagToReload == IndicatorToReload.one*/)
+        {/*
+        	if(sma_20.isSelected())
+                lineChart.getData().add(sma20);
+
+        	if(sma_50.isSelected())
+                lineChart.getData().add(sma50);
+
+        	if(sma_100.isSelected())
+                lineChart.getData().add(sma100);
+
+        	if(sma_200.isSelected())
+                lineChart.getData().add(sma200); */
+
+        	handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+        }
+
         flagToReload = IndicatorToReload.one;
     }
 
@@ -225,10 +259,107 @@ public class LineChartController {
             getSMA200();
         }
 
+        if(true/*flagToReload == IndicatorToReload.two*/)
+        {/*
+        	if(sma_20.isSelected())
+                lineChart.getData().add(sma20);
+
+        	if(sma_50.isSelected())
+                lineChart.getData().add(sma50);
+
+        	if(sma_100.isSelected())
+                lineChart.getData().add(sma100);
+
+        	if(sma_200.isSelected())
+                lineChart.getData().add(sma200); */
+
+        	handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+        }
+
         flagToReload = IndicatorToReload.two;
     }
 
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
+        lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), FIVE_YEAR);
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("5 years data");
+            lineChart.getData().add(data);
+            getSMA20();
+            getSMA50();
+            getSMA100();
+            getSMA200();
+        }
+
+        if(true/*flagToReload == IndicatorToReload.five*/)
+        {/*
+        	if(sma_20.isSelected())
+                lineChart.getData().add(sma20);
+
+        	if(sma_50.isSelected())
+                lineChart.getData().add(sma50);
+
+        	if(sma_100.isSelected())
+                lineChart.getData().add(sma100);
+
+        	if(sma_200.isSelected())
+                lineChart.getData().add(sma200); */
+
+        	handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+        }
+
+        flagToReload = IndicatorToReload.five;
+    }
+
+
+    public void oneYearAction() throws IOException{
+        lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("1 years data");
+            lineChart.getData().add(data);
+            getSMA20();
+            getSMA50();
+            getSMA100();
+            getSMA200();
+        }
+
+        flagToReload = IndicatorToReload.one;
+    }
+
+    public void twoYearAction(ActionEvent event) throws IOException{
+        lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), TWO_YEAR);
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("2 years data");
+            lineChart.getData().add(data);
+            getSMA20();
+            getSMA50();
+            getSMA100();
+            getSMA200();
+        }
+
+        flagToReload = IndicatorToReload.two;
+    }
+
+    public void fiveYearAction(ActionEvent event) throws IOException{
         lineChart.getData().clear();
         lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), FIVE_YEAR);
@@ -437,9 +568,9 @@ public class LineChartController {
             switch(flagToReload)
             {
 	            case all: System.out.println("Im all");allDatabtn(); break;
-	            case one: System.out.println("Im one");oneYearDatabtn(); break;
-	            case two: System.out.println("Im two");twoYearDatabtn(event); break;
-	            case five:System.out.println("Im five");fiveYearDatabtn(event); break;
+	            case one: System.out.println("Im one");oneYearAction(); break;
+	            case two: System.out.println("Im two");twoYearAction(event); break;
+	            case five:System.out.println("Im five");fiveYearAction(event); break;
 	            default: flagToReload = IndicatorToReload.none; main.showChartView(); break;
             }
 
