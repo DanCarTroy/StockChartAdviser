@@ -181,6 +181,10 @@ public class LineChartController {
             sma200 = analysis.getSMA200();
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
+            sma20.setName("20 days SMA");
+            sma50.setName("50 days SMA");
+            sma100.setName("100 days SMA");
+            sma200.setName("200 days SMA");
         }
     }
 
@@ -199,6 +203,10 @@ public class LineChartController {
             sma200 = analysis.getSMA200();
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
+            sma20.setName("20 days SMA");
+            sma50.setName("50 days SMA");
+            sma100.setName("100 days SMA");
+            sma200.setName("200 days SMA");
         }
     }
 
@@ -217,6 +225,10 @@ public class LineChartController {
             sma200 = analysis.getSMA200();
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
+            sma20.setName("20 days SMA");
+            sma50.setName("50 days SMA");
+            sma100.setName("100 days SMA");
+            sma200.setName("200 days SMA");
         }
     }
 
@@ -235,6 +247,10 @@ public class LineChartController {
             sma200 = analysis.getSMA200();
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
+            sma20.setName("20 days SMA");
+            sma50.setName("50 days SMA");
+            sma100.setName("100 days SMA");
+            sma200.setName("200 days SMA");
         }
     }
 
