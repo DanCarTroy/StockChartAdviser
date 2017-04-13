@@ -3,10 +3,18 @@ package mastero.opto.view;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 
+
 import javafx.embed.swing.SwingFXUtils;
+
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
@@ -17,21 +25,25 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import mastero.opto.MainApp;
+import mastero.opto.model.Signal;
 import mastero.opto.model.Stock;
 import mastero.opto.util.StockDownloader;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -41,7 +53,7 @@ import javax.xml.bind.Marshaller;
  */
 public class LineChartController {
 
-	@FXML
+    @FXML
     private TableView<Stock> stockTable;
     @FXML
     private TableColumn<Stock, String> stockSymbolColumn;
@@ -62,6 +74,15 @@ public class LineChartController {
     @FXML
     private TableColumn<Stock, String> d30NameColumn;
 
+    @FXML
+    private TableView<Signal> signalTable;
+    @FXML
+    private TableColumn<Signal, String> sigDateColumn;
+    @FXML
+    private TableColumn<Signal, String> sigActionColumn;
+
+    private ObservableList<Signal> signalList = FXCollections.observableArrayList();
+
     private Stock currentStock;
 
     MainApp main = new MainApp();
@@ -73,6 +94,8 @@ public class LineChartController {
     XYChart.Series<String, Number> sma100 = new XYChart.Series<String, Number>();
     XYChart.Series<String, Number> sma200 = new XYChart.Series<String, Number>();
     XYChart.Series<String, Number> data = new XYChart.Series<String, Number>();
+    XYChart.Series<String, Number> buySignals = new XYChart.Series<String, Number>();
+    XYChart.Series<String, Number> sellSignals = new XYChart.Series<String, Number>();
     @FXML Button allDataButton;
     @FXML Button oneYearDataButton;
     @FXML Button twoYearDataButton;
@@ -84,6 +107,8 @@ public class LineChartController {
     @FXML CheckBox sma_200;
     @FXML Button cutDataBtn;
     @FXML LineChart<String, Number>  lineChart;
+    @FXML
+    Label label;
 
     /*
     private boolean allDataButtonFlag = false;
@@ -117,42 +142,47 @@ public class LineChartController {
 
 
 
-    	try{
-        // Initialize the favorite stock table with the two columns.
-    	stockSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
-    	stockNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+        try{
+            // Initialize the favorite stock table with the two columns.
+            stockSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+            stockNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
 
 
-    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
-        stockTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+            // Listen for selection changes and pass the selected stock so that it can be used in the program.
+            stockTable.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> setCurrentStock(newValue));
 
-     // Initialize the Dow30 stock table with the two columns.
-    	d30SymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
-    	d30NameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
-
-
-    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
-        dow30Table.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> setCurrentStock(newValue));
-
-     // Initialize the Most Active stock table with the two columns.
-    	activeSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
-    	activeNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+            // Initialize the Dow30 stock table with the two columns.
+            d30SymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+            d30NameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
 
 
-    	// Listen for selection changes and pass the selected stock so that it can be used in the program.
-        mostActiveTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> setCurrentStock(newValue));
+            // Listen for selection changes and pass the selected stock so that it can be used in the program.
+            dow30Table.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> setCurrentStock(newValue));
 
-    	}
-    	catch(NullPointerException e)
-    	{
-    		System.out.println("NASDAQ, CNN, or Yahoo did not cooperate :(");
-    	}
+            // Initialize the Most Active stock table with the two columns.
+            activeSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+            activeNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
+
+
+            // Listen for selection changes and pass the selected stock so that it can be used in the program.
+            mostActiveTable.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> setCurrentStock(newValue));
+
+            // Initialize the Signal table with the two columns.
+            sigDateColumn.setCellValueFactory(cellData -> cellData.getValue().signalDateProperty());
+            sigActionColumn.setCellValueFactory(cellData -> cellData.getValue().signalNameProperty());
+
+        }
+        catch(NullPointerException e)
+        {
+            System.out.println("NASDAQ, CNN, or Yahoo did not cooperate :(");
+        }
     }
 
     public void setCurrentStock(Stock stk){
+
     	currentStock = stk;
 
     	try {
@@ -166,6 +196,7 @@ public class LineChartController {
         handle50Checkboxes();
         handle100Checkboxes();
         handle200Checkboxes();
+
     }
 
     /**
@@ -189,17 +220,23 @@ public class LineChartController {
 
     public void allDatabtn()throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol());
         if (StockDownloader.getChartData(currentStock.getStockSymbol()).getData().size() == 0)
             showErroPopUp();
         else {
+            DataAnalysis analysis = new DataAnalysis(data);
             data.setName("All data");
             lineChart.getData().add(data);
-            getSMA20();
-            getSMA50();
-            getSMA100();
-            getSMA200();
+            sma20 = analysis.getSMA20();
+            sma50 = analysis.getSMA50();
+            sma100 = analysis.getSMA100();
+            sma200 = analysis.getSMA200();
+            buySignals = analysis.getBuySignals();
+            sellSignals = analysis.getSellSignals();
+            sma20.setName("20 days SMA");
+            sma50.setName("50 days SMA");
+            sma100.setName("100 days SMA");
+            sma200.setName("200 days SMA");
         }
 
         flagToReload = IndicatorToReload.all;
@@ -207,117 +244,85 @@ public class LineChartController {
 
     public void oneYearDatabtn() throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
+            //DataAnalysis analysis = new DataAnalysis(data);
             data.setName("1 years data");
             lineChart.getData().add(data);
             getSMA20();
             getSMA50();
             getSMA100();
             getSMA200();
+            //buySignals = analysis.getBuySignals();
+            //sellSignals = analysis.getSellSignals();
+            //sma20.setName("20 days SMA");
+            //sma50.setName("50 days SMA");
+            //sma100.setName("100 days SMA");
+            //sma200.setName("200 days SMA");
         }
 
-        if(true/*flagToReload == IndicatorToReload.one*/)
-        {/*
-        	if(sma_20.isSelected())
-                lineChart.getData().add(sma20);
-
-        	if(sma_50.isSelected())
-                lineChart.getData().add(sma50);
-
-        	if(sma_100.isSelected())
-                lineChart.getData().add(sma100);
-
-        	if(sma_200.isSelected())
-                lineChart.getData().add(sma200); */
-
+      //Making things more automatic for the user
         	handle20Checkboxes();
             handle50Checkboxes();
             handle100Checkboxes();
             handle200Checkboxes();
 
-        }
 
         flagToReload = IndicatorToReload.one;
     }
 
     public void twoYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), TWO_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
+        	//DataAnalysis analysis = new DataAnalysis(data);
             data.setName("2 years data");
             lineChart.getData().add(data);
             getSMA20();
             getSMA50();
             getSMA100();
             getSMA200();
+            //buySignals = analysis.getBuySignals();
+            //sellSignals = analysis.getSellSignals();
         }
 
-        if(true/*flagToReload == IndicatorToReload.two*/)
-        {/*
-        	if(sma_20.isSelected())
-                lineChart.getData().add(sma20);
-
-        	if(sma_50.isSelected())
-                lineChart.getData().add(sma50);
-
-        	if(sma_100.isSelected())
-                lineChart.getData().add(sma100);
-
-        	if(sma_200.isSelected())
-                lineChart.getData().add(sma200); */
-
+      //Making things more automatic for the user
         	handle20Checkboxes();
             handle50Checkboxes();
             handle100Checkboxes();
             handle200Checkboxes();
 
-        }
 
         flagToReload = IndicatorToReload.two;
     }
 
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), FIVE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
         else {
+        	//DataAnalysis analysis = new DataAnalysis(data);
             data.setName("5 years data");
             lineChart.getData().add(data);
             getSMA20();
             getSMA50();
             getSMA100();
             getSMA200();
+            //buySignals = analysis.getBuySignals();
+            //sellSignals = analysis.getSellSignals();
         }
-
-        if(true/*flagToReload == IndicatorToReload.five*/)
-        {/*
-        	if(sma_20.isSelected())
-                lineChart.getData().add(sma20);
-
-        	if(sma_50.isSelected())
-                lineChart.getData().add(sma50);
-
-        	if(sma_100.isSelected())
-                lineChart.getData().add(sma100);
-
-        	if(sma_200.isSelected())
-                lineChart.getData().add(sma200); */
+        	//Making things more automatic for the user
 
         	handle20Checkboxes();
             handle50Checkboxes();
             handle100Checkboxes();
             handle200Checkboxes();
 
-        }
 
         flagToReload = IndicatorToReload.five;
     }
@@ -325,7 +330,7 @@ public class LineChartController {
 
     public void oneYearAction() throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
+        //lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -343,7 +348,7 @@ public class LineChartController {
 
     public void twoYearAction(ActionEvent event) throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
+        //lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), TWO_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -361,7 +366,7 @@ public class LineChartController {
 
     public void fiveYearAction(ActionEvent event) throws IOException{
         lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
+        //lineChart.setCreateSymbols(false);
         data = StockDownloader.getChartData(currentStock.getStockSymbol(), FIVE_YEAR);
         if (data.getData().size() == 0)
             showErroPopUp();
@@ -388,7 +393,6 @@ public class LineChartController {
     }
 
     public void getSMA20(){
-        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(data);
         sma20 = analysis.SMA20();
         sma20.setName("SMA 20");
@@ -396,7 +400,6 @@ public class LineChartController {
 
 
     public void getSMA50 (){
-        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(data);
         sma50 = analysis.SMA50();
         sma50.setName("SMA 50");
@@ -404,14 +407,12 @@ public class LineChartController {
 
 
     public void getSMA100(){
-        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(data);
         sma100 = analysis.SMA100();
         sma100.setName("SMA 100");
     }
 
     public void getSMA200(){
-        lineChart.setCreateSymbols(false);
         DataAnalysis analysis = new DataAnalysis(data);
         sma200 = analysis.SMA200();
         sma200.setName("SMA 200");
@@ -447,64 +448,7 @@ public class LineChartController {
             lineChart.getData().remove(sma200);
     }
 
-    public void oneYearNiceChartbtn() throws IOException{
-        lineChart.getData().clear();
-        lineChart.setCreateSymbols(false);
-        data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
-        if (data.getData().size() == 0)
-            showErroPopUp();
-        else {
-            data.setName("1 years data");
-            getSMA20();
-            getSMA50();
-            getSMA100();
-            getSMA200();
-            sma20.setName("20 days SMA");
-            sma50.setName("50 days SMA");
-            sma100.setName("100 days SMA");
-            sma200.setName("200 days SMA");
-            if(sma200.getData().size() != 0){
-                data = cutData(data,200);
-                sma20 = cutData(sma20, 200-20);
-                sma50 = cutData(sma50,200-50);
-                sma100 = cutData(sma100,200-100);
-                lineChart.getData().add(sma200);
-                lineChart.getData().add(sma100);
-                lineChart.getData().add(sma50);
-                lineChart.getData().add(sma20);
-            }
-
-            else if(sma100.getData().size() != 0){
-                data = cutData(data,100);
-                sma20 = cutData(sma20, 100-20);
-                sma50 = cutData(sma50,100-50);
-                lineChart.getData().add(sma100);
-                lineChart.getData().add(sma50);
-                lineChart.getData().add(sma20);
-            }
-            else if(sma50.getData().size() != 0){
-                data = cutData(data,50);
-                sma20 = cutData(sma20, 50-20);
-                lineChart.getData().add(sma50);
-                lineChart.getData().add(sma20);
-            }
-
-            else if(sma20.getData().size() != 0){
-                data = cutData(data,20);
-                lineChart.getData().add(sma20);
-            }
-            lineChart.getData().add(data);
-        }
-    }
-
-    public XYChart.Series<String, Number> cutData(XYChart.Series<String, Number> series ,int stop){
-        if (series.getData().size() > stop){
-            series.getData().remove(0, stop);
-        }
-        return series;
-    }
-
-    /**
+        /**
      * Saves a screenshot of current chart to the specified file.
      *
      * @param file
@@ -622,5 +566,178 @@ public class LineChartController {
             main.getPrimaryStage().setTitle("StockChartAdviser");
         }
     }
+
+    /**
+     * Saves a screenshot to the location that was previously used to save. If there is no
+     * previous location, the "save as" dialog is shown.
+     */
+    public void saveImage() throws IOException{
+        File file = main.getLastOpenedFile();
+        if (file != null) {
+            main.saveScreenshot(file);
+        } else {
+            saveAs();
+        }
+    }
+
+    /**
+     * Opens a FileChooser to let the user select a file to save to.
+     */
+    private void saveAs() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "PNG files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Show save file dialog
+        File file = fileChooser.showSaveDialog(main.getPrimaryStage());
+
+        if (file != null) {
+            // Make sure it has the correct extension
+            if (!file.getPath().endsWith(".png")) {
+                file = new File(file.getPath() + ".png");
+            }
+            main.saveScreenshot(file);
+        }
+    }
+
+    public void logout()
+    {
+    	main.initLogin();
+    }
+
+
+    public void oneYearNiceChartbtn() throws IOException{
+    	/*sma20.getData().clear();
+        sma50.getData().clear();
+        sma100.getData().clear();
+        sma200.getData().clear();
+        data.getData().clear();*/
+
+    	lineChart.getData().clear();
+        signalTable.getItems().clear();
+
+
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
+        int dataSize = data.getData().size();
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("1 years data");
+            DataAnalysis analysis = new DataAnalysis(data);
+            sma20 = analysis.getSMA20();
+            int sma20Size = sma20.getData().size();
+            sma50 = analysis.getSMA50();
+            int sma50Size = sma50.getData().size();
+            sma100 = analysis.getSMA100();
+            int sma100Size = sma100.getData().size();
+            sma200 = analysis.getSMA200();
+            int sma200Size= sma200.getData().size();
+            buySignals = analysis.getBuySignals();
+            sellSignals = analysis.getSellSignals();
+            sma20.setName("20 days SMA");
+            sma50.setName("50 days SMA");
+            sma100.setName("100 days SMA");
+            sma200.setName("200 days SMA");
+            if (sma200.getData().size() != 0) {
+                data = cutData(data, dataSize - sma200Size);
+                sma20 = cutData(sma20, sma20Size - sma200Size);
+                sma50 = cutData(sma50, sma50Size - sma200Size);
+                sma100 = cutData(sma100, sma100Size - sma200Size);
+                lineChart.getData().add(sma200);
+                lineChart.getData().add(sma100);
+                lineChart.getData().add(sma50);
+                lineChart.getData().add(sma20);
+            } else if (sma100.getData().size() != 0) {
+                data = cutData(data, dataSize - sma100Size);
+                sma20 = cutData(sma20, sma20Size - sma100Size);
+                sma50 = cutData(sma50, sma50Size - sma100Size);
+                lineChart.getData().add(sma100);
+                lineChart.getData().add(sma50);
+                lineChart.getData().add(sma20);
+            } else if (sma50.getData().size() != 0) {
+                data = cutData(data, dataSize - sma50Size);
+                sma20 = cutData(sma20, sma20Size - sma50Size);
+                lineChart.getData().add(sma50);
+                lineChart.getData().add(sma20);
+            } else if (sma20.getData().size() != 0) {
+                data = cutData(data, dataSize - sma20Size);
+                lineChart.getData().add(sma20);
+            }
+            lineChart.getData().add(data);
+            buySignals = removeData(data, buySignals);
+            buySignals.setName("buy signal");
+            sellSignals = removeData(data, sellSignals);
+            sellSignals.setName("sell signal");
+            lineChart.getData().add(buySignals);
+            lineChart.getData().add(sellSignals);
+
+            if(buySignals != null && buySignals.getData().size() != 0){
+                for(int i = 0; i < buySignals.getData().size(); i++){
+
+                    String string = buySignals.getData().get(i).getXValue();
+                    String action = "buy";
+
+                    System.out.println("buy signal "+i+": "+string);
+                    //put string and action on a table please
+                    signalList.add(new Signal(string,action));
+                }
+            }
+            //do exactly the same thing for sell Signal.
+            if(sellSignals != null && sellSignals.getData().size() != 0){
+                for(int i = 0; i < sellSignals.getData().size(); i++){
+
+                    String string = sellSignals.getData().get(i).getXValue();
+                    String action = "sell";
+
+                    System.out.println("sell signal "+i+": "+string);
+                    //put string and action on a table please
+                    signalList.add(new Signal(string,action));
+
+                }
+            }
+
+            // Populate the Signal table with the list.
+            signalTable.setItems(signalList);
+            //sigDateColumn.setCellValueFactory(cellData -> cellData.getValue().signalDateProperty());
+            //sigActionColumn.setCellValueFactory(cellData -> cellData.getValue().signalNameProperty());
+        }
+    }
+
+    public XYChart.Series<String, Number> cutData(XYChart.Series<String, Number> series ,int stop){
+        if (series.getData().size() > stop){
+            series.getData().remove(0, stop);
+        }
+        return series;
+    }
+    public XYChart.Series<String, Number> removeData(XYChart.Series<String, Number> data0, XYChart.Series<String, Number> data1){
+        XYChart.Series<String, Number> temp0 = copy(data1);
+        if(data0 != null && data1 != null & data0.getData().size() > 0 && data1.getData().size() > 0){
+            String target = data0.getData().get(0).getXValue();
+            int index = data1.getData().size();
+            for (int i = 0; i < index; i++){
+                String walk = temp0.getData().get(i).getXValue();
+                if(walk.compareTo(target) < 0) {
+                    temp0.getData().remove(i);
+                    index = temp0.getData().size();
+                    i--;
+                }
+            }
+        }
+        return temp0;
+    }
+
+    public XYChart.Series<String, Number> copy(XYChart.Series<String, Number> target){
+        XYChart.Series<String, Number> temp = new XYChart.Series<>();
+        for(int i = 0; i < target.getData().size(); i++){
+            String string = target.getData().get(i).getXValue();
+            Number number = target.getData().get(i).getYValue();
+            temp.getData().add(new XYChart.Data<>(string, number));
+
+        }
+        return temp;
+}
 
 }

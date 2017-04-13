@@ -116,4 +116,14 @@ public class MainFrameController {
         System.exit(0);
     }
 
+    /**
+     * Goes back to login form.
+     */
+    @FXML
+    private void handleLogout() {
+        mainApp.initLogin();
+    }
+
+
+
 }

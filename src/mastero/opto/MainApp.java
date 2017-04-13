@@ -99,8 +99,10 @@ public class MainApp extends Application {
 		ArrayList<String> stockSymbols = new ArrayList<String>();
 
 		// YQL (Yahoo Query Language) url --> preparing the url --> Getting the name.
+
 		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20title%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fhotstocks%2F'%20and%20xpath%3D'%2F%2Ftable%5B%40class%3D%22wsod_dataTable%20wsod_dataTableBigAlt%22%5D%2F%2Ftd%2Fspan'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fhotstocks%2F'%20and%20xpath%3D'%2F%2Ftable%5B%40class%3D%22wsod_dataTable%20wsod_dataTableBigAlt%22%5D%2F%2Ftd%2Fa'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
 
 		String JSONstring = StockDownloader.getJASON(nameYqlUrl);
 		System.out.println("get most active jason = "+JSONstring);
