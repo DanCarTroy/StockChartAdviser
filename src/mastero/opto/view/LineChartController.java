@@ -388,6 +388,15 @@ public class LineChartController {
             y.setLabel("Close Price");
         	LineChart<String, Number>  lchart = new LineChart<String, Number>(x, y); //lineChart;
         	lchart.setAnimated(false);
+        	lineChart.setAnimated(false);
+
+
+        	lineChart.getData().remove(data);
+            lineChart.getData().remove(sma20);
+            lineChart.getData().remove(sma50);
+            lineChart.getData().remove(sma100);
+            lineChart.getData().remove(sma200);
+
 
         	lchart.getData().add(data);
         	if(sma_20.isSelected() && sma20 != null)
@@ -415,8 +424,13 @@ public class LineChartController {
             // Save the file path to the registry.
             setUserFilePath(file);
 
-            lineChart.getData().remove(sma20);
-            lineChart.getData().remove(sma50);
+
+        	sma20.getData().clear();// = new XYChart.Series<String, Number>();
+            sma50.getData().clear();// = new XYChart.Series<String, Number>();
+            sma100.getData().clear();// = new XYChart.Series<String, Number>();
+            sma200.getData().clear();// = new XYChart.Series<String, Number>();
+            data.getData().clear();// = new XYChart.Series<String, Number>();
+
 
 
             ActionEvent event = new ActionEvent();
@@ -428,6 +442,11 @@ public class LineChartController {
 	            case five:System.out.println("Im five");fiveYearDatabtn(event); break;
 	            default: flagToReload = IndicatorToReload.none; main.showChartView(); break;
             }
+
+            handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
 
 
             //main.showChartView();

@@ -342,6 +342,7 @@ public class MainApp extends Application {
     public void saveScreenshot(File file)
     {
     	currentChartInstance.saveScreenshotToFile(file);
+    	//currentChartInstance.resetGraph();
     }
 
 
