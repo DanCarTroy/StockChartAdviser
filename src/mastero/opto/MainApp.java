@@ -16,10 +16,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.prefs.Preferences;
+
+import javax.imageio.ImageIO;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,8 +33,13 @@ import mastero.opto.util.StockDownloader;
 import mastero.opto.view.CreateUserDialogController;
 import mastero.opto.view.LineChartController;
 import mastero.opto.view.LoginController;
+import mastero.opto.view.MainFrameController;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -42,7 +51,9 @@ public class MainApp extends Application {
 
 	private Stage primaryStage;
 	private StackPane loginForm;
+	private AnchorPane chartView;
 	private static BorderPane mainLayout = new BorderPane();
+	private LineChartController currentChartInstance;
 
 
 	public static User currentUser;
@@ -88,9 +99,11 @@ public class MainApp extends Application {
 		ArrayList<String> stockSymbols = new ArrayList<String>();
 
 		// YQL (Yahoo Query Language) url --> preparing the url --> Getting the name.
-		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fb%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fwww.nasdaq.com%2Fmarkets%2Fmost-active.aspx'%20and%20xpath%3D'*%2F%2Ftd%2F%2Fh3%2Fa'%20&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
+		String nameYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20title%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fhotstocks%2F'%20and%20xpath%3D'%2F%2Ftable%5B%40class%3D%22wsod_dataTable%20wsod_dataTableBigAlt%22%5D%2F%2Ftd%2Fspan'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+		String symbolYqlUrl = "https://query.yahooapis.com/v1/public/yql?q=select%20content%20from%20html%20where%20url%3D'http%3A%2F%2Fmoney.cnn.com%2Fdata%2Fhotstocks%2F'%20and%20xpath%3D'%2F%2Ftable%5B%40class%3D%22wsod_dataTable%20wsod_dataTableBigAlt%22%5D%2F%2Ftd%2Fa'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
+    
 		String JSONstring = StockDownloader.getJASON(nameYqlUrl);
 		System.out.println("get most active jason = "+JSONstring);
 
@@ -101,18 +114,18 @@ public class MainApp extends Application {
 		try{
 
 			JSONObject j = new JSONObject(JSONstring);
-	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("a");
+	        arr = j.getJSONObject("query").getJSONObject("results").getJSONArray("span");
 
 	        JSONObject j2 = new JSONObject(JSONsymbol);
 	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
 
 
-	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
+
 	        for(int i=0; i < arr.length(); i++)
 	        {
+	        	JSONObject obj = arr.getJSONObject(i);
+	            String name = obj.getString("title");
 
-	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
-	            String name = arr.getString(i);
 	            String symbol = arr2.getString(i);
 
 	            System.out.println(name);
@@ -123,7 +136,7 @@ public class MainApp extends Application {
 
 	            mostActiveList.add(new Stock(symbol, name));
 
-	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
+
 
 	        }
 		}
@@ -160,11 +173,10 @@ public class MainApp extends Application {
 	        arr2 = j2.getJSONObject("query").getJSONObject("results").getJSONArray("a");
 
 
-	        // Ending the loop before going through index 0 because index 0 of arr gives back the name of the attributes and not the values.
+	        //
 	        for(int i=0; i < arr2.length(); i++)
 	        {
 
-	            // closePrice = Double.parseDouble((f.format(Double.parseDouble(obj.getString("close")))));
 	            String name = arr.getString(i);
 	            String symbol = arr2.getString(i);
 
@@ -176,7 +188,7 @@ public class MainApp extends Application {
 
 	            dow30List.add(new Stock(symbol, name));
 
-	            //series.getData().add(new XYChart.Data<String, Number>(dateString, closePrice));
+
 
 	        }
 		}
@@ -209,6 +221,9 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("StockChartAdviser");
+
+     // Set the application icon.
+        this.primaryStage.getIcons().add(new Image("file:resources/images/aquicon_basecamp.png"));
 
         initLogin();
 
@@ -280,19 +295,25 @@ public class MainApp extends Application {
     public void showMainFrame()throws IOException{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/MainFrame.fxml"));
-		mainLayout = (BorderPane) loader.load();
-		Scene scene = new Scene(mainLayout);
+		setMainLayout((BorderPane) loader.load());
+		Scene scene = new Scene(getMainLayout());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
+		// Give the controller access to this LineChartController.
+        MainFrameController controller2 = loader.getController();
+        controller2.setMainApp(this);
+
 		showChartView();
+
+
 	}
 
     public void showMainWindow() throws IOException{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/MainWindow.fxml"));
 		//mainLayout = loader.load();
-		mainLayout.setCenter(loader.load());
+		getMainLayout().setCenter(loader.load());
 
 
 		// Show the scene containing the root layout.
@@ -308,13 +329,42 @@ public class MainApp extends Application {
     public void showChartView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
-		AnchorPane chartView = loader.load();
-		mainLayout.setCenter(chartView);
+		chartView = loader.load();
+		getMainLayout().setCenter(chartView);
 
 		// Give the controller access to the main app.
         LineChartController controller = loader.getController();
         controller.setMainApp(this);
+
+        currentChartInstance = controller;
+
+
 	}
+
+    public void saveScreenshot(File file)
+    {
+    	currentChartInstance.saveScreenshotToFile(file);
+    	//currentChartInstance.resetGraph();
+    }
+
+
+    /**
+     * Returns the file that was last opened.
+     * This is read from the user's registry.
+     * Null will be returned if nothing is found.
+     *
+     * @return last opened file
+     */
+    public File getLastOpenedFile() {
+
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        String filePath = prefs.get("filePath", null);
+        if (filePath != null)
+        	return new File(filePath);
+        else
+            return null;
+
+    }
 
 
     /**
@@ -327,5 +377,13 @@ public class MainApp extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+	public static BorderPane getMainLayout() {
+		return mainLayout;
+	}
+
+	public static void setMainLayout(BorderPane mainLayout) {
+		MainApp.mainLayout = mainLayout;
 	}
 }

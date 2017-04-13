@@ -2,10 +2,12 @@ package mastero.opto.view;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
+
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,11 +15,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -26,7 +39,13 @@ import mastero.opto.model.Signal;
 import mastero.opto.model.Stock;
 import mastero.opto.util.StockDownloader;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
+
+import javax.imageio.ImageIO;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 /**
  * Created by LucienChu on 2017-02-25.
@@ -90,6 +109,22 @@ public class LineChartController {
     @FXML
     Label label;
 
+    /*
+    private boolean allDataButtonFlag = false;
+    private boolean oYDButtonFlag = false;
+    private boolean tYDButtonFlag = false;
+    private boolean fYDButtonFlag = false;
+    //private boolean smaButtonFlag = false;
+    private boolean sma_20CBoxFlag = false;
+    private boolean sma_50CBoxFlag = false;
+    private boolean sma_100CBoxFlag = false;
+    private boolean sma_200CBoxFlag = false; */
+
+    private enum IndicatorToReload {none, all, one, two, five,
+    	sma20, sma50, sma100, sma200};
+
+    private IndicatorToReload  flagToReload = IndicatorToReload.none;
+
     /**
      * The constructor.
      * The constructor is called before the initialize() method.
@@ -104,11 +139,11 @@ public class LineChartController {
     @FXML
     private void initialize() {
 
-        try{
-            // Initialize the favorite stock table with the two columns.
-            stockSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
-            stockNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
 
+    	try{
+            // Initialize the favorite stock table with the two columns.
+    	      stockSymbolColumn.setCellValueFactory(cellData -> cellData.getValue().stockSymbolProperty());
+    	      stockNameColumn.setCellValueFactory(cellData -> cellData.getValue().stockNameProperty());
 
             // Listen for selection changes and pass the selected stock so that it can be used in the program.
             stockTable.getSelectionModel().selectedItemProperty().addListener(
@@ -144,7 +179,21 @@ public class LineChartController {
     }
 
     public void setCurrentStock(Stock stk){
-        currentStock = stk;
+
+    	currentStock = stk;
+
+    	try {
+			oneYearAction();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    	handle20Checkboxes();
+        handle50Checkboxes();
+        handle100Checkboxes();
+        handle200Checkboxes();
+
     }
 
     /**
@@ -182,6 +231,8 @@ public class LineChartController {
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
         }
+
+        flagToReload = IndicatorToReload.all;
     }
 
     public void oneYearDatabtn() throws IOException{
@@ -200,6 +251,29 @@ public class LineChartController {
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
         }
+
+        if(true/*flagToReload == IndicatorToReload.one*/)
+        {/*
+        	if(sma_20.isSelected())
+                lineChart.getData().add(sma20);
+
+        	if(sma_50.isSelected())
+                lineChart.getData().add(sma50);
+
+        	if(sma_100.isSelected())
+                lineChart.getData().add(sma100);
+
+        	if(sma_200.isSelected())
+                lineChart.getData().add(sma200); */
+
+        	handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+        }
+
+        flagToReload = IndicatorToReload.one;
     }
 
     public void twoYearDatabtn(ActionEvent event) throws IOException{
@@ -218,6 +292,29 @@ public class LineChartController {
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
         }
+
+        if(true/*flagToReload == IndicatorToReload.two*/)
+        {/*
+        	if(sma_20.isSelected())
+                lineChart.getData().add(sma20);
+
+        	if(sma_50.isSelected())
+                lineChart.getData().add(sma50);
+
+        	if(sma_100.isSelected())
+                lineChart.getData().add(sma100);
+
+        	if(sma_200.isSelected())
+                lineChart.getData().add(sma200); */
+
+        	handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+        }
+
+        flagToReload = IndicatorToReload.two;
     }
 
     public void fiveYearDatabtn(ActionEvent event) throws IOException{
@@ -236,6 +333,84 @@ public class LineChartController {
             buySignals = analysis.getBuySignals();
             sellSignals = analysis.getSellSignals();
         }
+
+        if(true/*flagToReload == IndicatorToReload.five*/)
+        {/*
+        	if(sma_20.isSelected())
+                lineChart.getData().add(sma20);
+
+        	if(sma_50.isSelected())
+                lineChart.getData().add(sma50);
+
+        	if(sma_100.isSelected())
+                lineChart.getData().add(sma100);
+
+        	if(sma_200.isSelected())
+                lineChart.getData().add(sma200); */
+
+        	handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+        }
+
+        flagToReload = IndicatorToReload.five;
+    }
+
+
+    public void oneYearAction() throws IOException{
+        lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), ONE_YEAR);
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("1 years data");
+            lineChart.getData().add(data);
+            getSMA20();
+            getSMA50();
+            getSMA100();
+            getSMA200();
+        }
+
+        flagToReload = IndicatorToReload.one;
+    }
+
+    public void twoYearAction(ActionEvent event) throws IOException{
+        lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), TWO_YEAR);
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("2 years data");
+            lineChart.getData().add(data);
+            getSMA20();
+            getSMA50();
+            getSMA100();
+            getSMA200();
+        }
+
+        flagToReload = IndicatorToReload.two;
+    }
+
+    public void fiveYearAction(ActionEvent event) throws IOException{
+        lineChart.getData().clear();
+        lineChart.setCreateSymbols(false);
+        data = StockDownloader.getChartData(currentStock.getStockSymbol(), FIVE_YEAR);
+        if (data.getData().size() == 0)
+            showErroPopUp();
+        else {
+            data.setName("5 years data");
+            lineChart.getData().add(data);
+            getSMA20();
+            getSMA50();
+            getSMA100();
+            getSMA200();
+        }
+
+        flagToReload = IndicatorToReload.five;
     }
 
     public void showErroPopUp()throws IOException{
@@ -400,6 +575,7 @@ public class LineChartController {
         }
         return series;
     }
+
     public XYChart.Series<String, Number> removeData(XYChart.Series<String, Number> data0, XYChart.Series<String, Number> data1){
         XYChart.Series<String, Number> temp0 = copy(data1);
         if(data0 != null && data1 != null & data0.getData().size() > 0 && data1.getData().size() > 0){
@@ -427,4 +603,126 @@ public class LineChartController {
         }
         return temp;
     }
+
+
+    /**
+     * Saves a screenshot of current chart to the specified file.
+     *
+     * @param file
+     */
+    public void saveScreenshotToFile(File file) {
+        try {
+
+        	//defining the axes
+            final CategoryAxis x = new CategoryAxis();
+            final NumberAxis y = new NumberAxis();
+            x.setLabel("Date");
+            y.setLabel("Close Price");
+        	LineChart<String, Number>  lchart = new LineChart<String, Number>(x, y); //lineChart;
+        	lchart.setAnimated(false);
+        	lineChart.setAnimated(false);
+
+
+        	lineChart.getData().remove(data);
+            lineChart.getData().remove(sma20);
+            lineChart.getData().remove(sma50);
+            lineChart.getData().remove(sma100);
+            lineChart.getData().remove(sma200);
+
+
+        	lchart.getData().add(data);
+        	if(sma_20.isSelected() && sma20 != null)
+        		lchart.getData().add(sma20);
+        	if(sma_50.isSelected() && sma50 != null)
+        		lchart.getData().add(sma50);
+        	if(sma_100.isSelected() && sma100 != null)
+        		lchart.getData().add(sma100);
+        	if(sma_200.isSelected() && sma200 != null)
+        		lchart.getData().add(sma200);
+
+
+        	/*
+        	FXMLLoader loader = new FXMLLoader();
+    		loader.setLocation(MainApp.class.getResource("view/LineChartView.fxml"));
+    		AnchorPane newchartView = loader.load();
+    		main.getMainLayout().setCenter(newchartView);
+			*/
+
+        	Scene scene = new Scene(lchart, 800, 600);
+        	saveAsPng(scene, file.getPath());
+            //stage.setScene(scene);
+            //saveAsPng(scene, "c:\\temp\\chart1.png");
+
+            // Save the file path to the registry.
+            setUserFilePath(file);
+
+
+        	sma20.getData().clear();// = new XYChart.Series<String, Number>();
+            sma50.getData().clear();// = new XYChart.Series<String, Number>();
+            sma100.getData().clear();// = new XYChart.Series<String, Number>();
+            sma200.getData().clear();// = new XYChart.Series<String, Number>();
+            data.getData().clear();// = new XYChart.Series<String, Number>();
+
+
+
+            ActionEvent event = new ActionEvent();
+            switch(flagToReload)
+            {
+	            case all: System.out.println("Im all");allDatabtn(); break;
+	            case one: System.out.println("Im one");oneYearAction(); break;
+	            case two: System.out.println("Im two");twoYearAction(event); break;
+	            case five:System.out.println("Im five");fiveYearAction(event); break;
+	            default: flagToReload = IndicatorToReload.none; main.showChartView(); break;
+            }
+
+            handle20Checkboxes();
+            handle50Checkboxes();
+            handle100Checkboxes();
+            handle200Checkboxes();
+
+
+            //main.showChartView();
+        } catch (Exception e) { // catches ANY exception
+        	e.printStackTrace();
+        	Alert alert = new Alert(AlertType.ERROR);
+        	alert.setTitle("Error");
+        	alert.setHeaderText("Could not save data");
+        	alert.setContentText("Could not save data to file:\n" + file.getPath());
+
+        	alert.showAndWait();
+        }
+    }
+
+    public void saveAsPng(Scene scene, String path) {
+    	WritableImage image = scene.snapshot(null);
+        File file = new File(path);
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the file path of the currently loaded file. The path is persisted in
+     * the OS specific registry.
+     *
+     * @param file the file or null to remove the path
+     */
+    public void setUserFilePath(File file) {
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        if (file != null) {
+            prefs.put("filePath", file.getPath());
+
+            // Update the stage title.
+            main.getPrimaryStage().setTitle("StockChartAdviser - " + file.getName());
+        } else {
+            prefs.remove("filePath");
+
+            // Update the stage title.
+            main.getPrimaryStage().setTitle("StockChartAdviser");
+        }
+    }
+
+
 }
