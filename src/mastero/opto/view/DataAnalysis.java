@@ -1,5 +1,6 @@
 package mastero.opto.view;
 
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 public class DataAnalysis {
     ArrayList<String> dateStrings = new ArrayList<>();
     ArrayList<Number> price = new ArrayList<>();
-    XYChart.Series<String, Number> data = null;
+    XYChart.Series<String, Number> data = new XYChart.Series<>();
     XYChart.Series<String, Number> buySignals = new XYChart.Series<>();
     XYChart.Series<String, Number> sellSignals = new XYChart.Series<>();
     public static final int TWENTY = 20;
@@ -18,11 +19,11 @@ public class DataAnalysis {
     public static final int HUNDRED = 100;
     public static final int TWO_HUNDRED = 200;
 
-    public DataAnalysis(XYChart.Series data){
-        int size = data.getData().size();
+    public DataAnalysis(XYChart.Series<String, Number> inputData){
+        int size = inputData.getData().size();
         XYChart.Series<String, Number> temp0 = new XYChart.Series<>();
         for(int i = 0; i < size; i++){
-            XYChart.Data aData = (XYChart.Data)data.getData().get(i);
+            XYChart.Data aData = inputData.getData().get(i);
             String string = (String) aData.getXValue();
             dateStrings.add(string);
             Number number = (Number) aData.getYValue();
@@ -32,6 +33,10 @@ public class DataAnalysis {
             temp0.getData().add(temp1);
         }
         this.data = temp0;
+        SMA20();
+        SMA50();
+        SMA100();
+        SMA200();
         analysizeAllSMAs();
     }
 
@@ -114,21 +119,19 @@ public class DataAnalysis {
         if (sma200 != null && sma200.getData().size() != 0)
             this.singleSMAAnalysis(sma200);
     }
-    public boolean cross(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        double precision = (double) 0.00000000000000001;
-        double preDiff = (double) c0.getYValue() - (double)p0.getYValue();
-        double curDiff = (double) c1.getYValue() - (double) p1.getYValue();
-        double product = preDiff*curDiff;
-        return (product < 0 || product < precision);
+    public boolean cross(XYChart.Data p0, XYChart.Data p1, XYChart.Data s0, XYChart.Data s1){
+        double preDiff = (double) p0.getYValue() - (double)s0.getYValue();
+        double aftDiff = (double) p1.getYValue() - (double) s1.getYValue();
+        return preDiff*aftDiff <  0;
     }
-    public boolean crossAbove(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        double diff = (double) p1.getYValue() - (double) c1.getYValue();
-        return this.cross(p0,p1,c0,c1) && diff > 0;
+    public boolean crossAbove(XYChart.Data p0, XYChart.Data p1, XYChart.Data s0, XYChart.Data s1){
+        double diff = (double) p1.getYValue() - (double) p0.getYValue();
+        return this.cross(p0,p1,s0, s1) && diff > 0;
     }
 
-    public boolean crossBelow(XYChart.Data p0, XYChart.Data p1, XYChart.Data c0, XYChart.Data c1){
-        double diff = (double) p1.getYValue() - (double) c1.getYValue();
-        return this.cross(p0,p1,c0,c1) && diff < 0;
+    public boolean crossBelow(XYChart.Data p0, XYChart.Data p1, XYChart.Data s0, XYChart.Data s1){
+        double diff = (double) p1.getYValue() - (double) p0.getYValue();
+        return this.cross(p0,p1,s0,s1) && diff < 0;
     }
 
     public boolean rising(XYChart.Data  prevData, XYChart.Data  postData){
@@ -141,31 +144,35 @@ public class DataAnalysis {
         return (diff < 0);
     }
 
-    public XYChart.Series<String, Number> getSellSignals(){
-        if(sellSignals == null || sellSignals.getData().size() == 0)
-            return null;
-        else{
-            XYChart.Series<String, Number> temp = new XYChart.Series<>();
-            for(int i = 0; i < sellSignals.getData().size(); i++){
-                String string = sellSignals.getData().get(i).getXValue();
-                Number number = sellSignals.getData().get(i).getYValue();
-                temp.getData().add(new XYChart.Data<>(string, number));
-            }
-            return temp;
+    public XYChart.Series<String, Number> copy(XYChart.Series<String, Number> target){
+        XYChart.Series<String, Number> temp = new XYChart.Series<>();
+        for(int i = 0; i < target.getData().size(); i++){
+            String string = target.getData().get(i).getXValue();
+            Number number = target.getData().get(i).getYValue();
+            temp.getData().add(new XYChart.Data<>(string, number));
         }
+        return temp;
+    }
+
+    public XYChart.Series<String, Number> getSellSignals(){
+        return copy(this.sellSignals);
     }
 
     public XYChart.Series<String, Number> getBuySignals(){
-        if(buySignals.getData().size() == 0)
-            return null;
-        else{
-            XYChart.Series<String, Number> temp = new XYChart.Series<>();
-            for(int i = 0; i < buySignals.getData().size(); i++){
-                String string = buySignals.getData().get(i).getXValue();
-                Number number = buySignals.getData().get(i).getYValue();
-                temp.getData().add(new XYChart.Data<>(string, number));
-            }
-            return temp;
-        }
+        return copy(this.buySignals);
+    }
+
+    public XYChart.Series<String, Number> getSMA20(){
+        return copy(this.SMA20());
+    }
+    public XYChart.Series<String, Number> getSMA50(){
+        return copy(this.SMA50());
+    }
+    public XYChart.Series<String, Number> getSMA100(){
+        return copy(this.SMA100());
+    }
+
+    public XYChart.Series<String, Number> getSMA200(){
+        return copy(this.SMA100());
     }
 }
